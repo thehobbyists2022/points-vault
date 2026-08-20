@@ -1,0 +1,27 @@
+name: Supabase Auto Keep-Alive
+
+on:
+  schedule:
+    # Runs every 3 days at 00:00 UTC
+    - cron: '0 0 */3 * *'
+  workflow_dispatch: # Allows manual trigger anytime from GitHub UI
+
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase Database
+        run: |
+          echo "Pinging Supabase REST API to prevent auto-pause..."
+          RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "apikey: sb_publishable_J1wJMg0KvGYguKk_09pPRg_7nrYFPGy" \
+            -H "Authorization: Bearer sb_publishable_J1wJMg0KvGYguKk_09pPRg_7nrYFPGy" \
+            "https://tgnedqojhbszgqoiloqe.supabase.co/rest/v1/card_rules?select=id&limit=1")
+          
+          echo "Supabase HTTP Response Status: $RESPONSE_CODE"
+          if [ "$RESPONSE_CODE" -eq 200 ]; then
+            echo "✅ Successfully pinged Supabase. 7-day pause timer reset!"
+          else
+            echo "⚠️ Unexpected status code $RESPONSE_CODE"
+            exit 1
+          fi
