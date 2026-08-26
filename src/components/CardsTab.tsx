@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
-import { CreditCard as CardIcon, Check, Plus, ShieldAlert, Sparkles, FileText } from 'lucide-react';
+import { CreditCard as CardIcon, Check, Plus, Sparkles, FileText, Edit2, Trash2, Target, Flame, ShieldCheck } from 'lucide-react';
 import { CreditCard, UserProfile } from '../data/mockData';
 import { StatementUploaderModal } from './StatementUploaderModal';
+import { AddCardModal } from './AddCardModal';
+import { EditBalanceModal } from './EditBalanceModal';
+import { RetentionHelperModal } from './RetentionHelperModal';
+import { ProductChangeGuideModal } from './ProductChangeGuideModal';
+import { OfferRadarSection } from './OfferRadarSection';
 import { useAppStore } from '../store/useAppStore';
 import { t } from '../i18n/translations';
+import { getMsrDaysRemaining } from '../lib/msr';
 
 interface CardsTabProps {
   cards: CreditCard[];
@@ -19,12 +25,21 @@ export const CardsTab: React.FC<CardsTabProps> = ({
   onRecordMsrSpend,
 }) => {
   const language = useAppStore((s) => s.language);
+  const addCard = useAppStore((s) => s.addCard);
+  const deleteCard = useAppStore((s) => s.deleteCard);
+  const updateCardBalance = useAppStore((s) => s.updateCardBalance);
+
   const [selectedIssuer, setSelectedIssuer] = useState<string>('All');
   const [spendInputCardId, setSpendInputCardId] = useState<string | null>(null);
   const [spendAmount, setSpendAmount] = useState<string>('');
   const [uploadingCardId, setUploadingCardId] = useState<string | null>(null);
+  const [isAddCardOpen, setIsAddCardOpen] = useState(false);
+  const [isRetentionOpen, setIsRetentionOpen] = useState(false);
+  const [isProductChangeOpen, setIsProductChangeOpen] = useState(false);
+  const [isRadarOpen, setIsRadarOpen] = useState(false);
+  const [editingCard, setEditingCard] = useState<CreditCard | null>(null);
 
-  const issuers = ['All', 'Amex', 'Chase', 'Capital One', 'Bilt'];
+  const issuers = ['All', 'Amex', 'Chase', 'Capital One', 'Citi', 'Bilt'];
   const issuerAllLabel = t(language, 'issuerAll');
 
   const filteredCards = cards.filter((card) => {
@@ -44,6 +59,12 @@ export const CardsTab: React.FC<CardsTabProps> = ({
     }
   };
 
+  const handleDeleteCard = (card: CreditCard) => {
+    if (window.confirm(`${t(language, 'cardDeleteConfirm')} (${card.name})`)) {
+      deleteCard(card.id);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Top Issuer Filter Header */}
@@ -58,23 +79,92 @@ export const CardsTab: React.FC<CardsTabProps> = ({
           </p>
         </div>
 
-        {/* Issuer Filter Pills */}
-        <div className="flex flex-wrap items-center bg-slate-950/80 p-1 rounded-xl border border-slate-800">
-          {issuers.map((issuer) => (
-            <button
-              key={issuer}
-              onClick={() => setSelectedIssuer(issuer)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                selectedIssuer === issuer
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              {issuer === 'All' ? issuerAllLabel : issuer}
-            </button>
-          ))}
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Issuer Filter Pills */}
+          <div className="flex flex-wrap items-center bg-slate-950/80 p-1 rounded-xl border border-slate-800">
+            {issuers.map((issuer) => (
+              <button
+                key={issuer}
+                onClick={() => setSelectedIssuer(issuer)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  selectedIssuer === issuer
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                {issuer === 'All' ? issuerAllLabel : issuer}
+              </button>
+            ))}
+          </div>
+
+          {/* ATH Radar Toggle Button */}
+          <button
+            onClick={() => setIsRadarOpen(!isRadarOpen)}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 active:scale-95 border ${
+              isRadarOpen
+                ? 'bg-gradient-to-r from-amber-500 to-rose-600 text-white border-rose-500 shadow-md shadow-rose-500/30'
+                : 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border-rose-500/30'
+            }`}
+          >
+            <Flame className="w-3.5 h-3.5 text-rose-400" />
+            <span>{language === 'en' ? 'ATH Radar' : '🔥 史高雷達'}</span>
+          </button>
+
+          {/* Safe Downgrade Guide Button */}
+          <button
+            onClick={() => setIsProductChangeOpen(true)}
+            className="px-3.5 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold shadow-md shadow-emerald-500/10 flex items-center space-x-1.5 active:scale-95 transition-all"
+          >
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <span>{language === 'en' ? 'Downgrade Guide' : '🛡️ 降級保點向導'}</span>
+          </button>
+
+          {/* Retention Helper Button */}
+          <button
+            onClick={() => setIsRetentionOpen(true)}
+            className="px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold shadow-md shadow-amber-500/10 flex items-center space-x-1.5 active:scale-95 transition-all"
+          >
+            <Target className="w-3.5 h-3.5 text-amber-400" />
+            <span>{t(language, 'retentionBtn')}</span>
+          </button>
+
+          {/* Add Card Button */}
+          <button
+            onClick={() => setIsAddCardOpen(true)}
+            className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 flex items-center space-x-1.5 active:scale-95 transition-all"
+          >
+            <Plus className="w-4 h-4" />
+            <span>{t(language, 'addCardBtn')}</span>
+          </button>
         </div>
       </div>
+
+      {/* Render Offer Radar if toggled */}
+      {isRadarOpen && <OfferRadarSection />}
+
+      {/* Empty State */}
+      {filteredCards.length === 0 && (
+        <div className="glass-panel rounded-3xl p-12 border border-slate-800 text-center space-y-4 max-w-lg mx-auto">
+          <div className="w-16 h-16 bg-indigo-500/10 border border-indigo-500/30 rounded-3xl flex items-center justify-center mx-auto text-indigo-400">
+            <Plus className="w-8 h-8" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-base font-bold text-white">{language === 'en' ? 'Your Card Wallet Is Currently Empty' : '您的卡包目前是空的'}</h3>
+            <p className="text-xs text-slate-400">
+              {language === 'en' ? 'Click the button below to add your first credit card, or load demo data to explore all the calculations.' : '點擊下方按鈕新增您持有的第一張信用卡，或載入示範數據體驗所有計算功能。'}
+            </p>
+          </div>
+          <div className="flex justify-center space-x-3 pt-2">
+            <button
+              onClick={() => setIsAddCardOpen(true)}
+              className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 flex items-center space-x-1.5"
+            >
+              <Plus className="w-4 h-4" />
+              <span>{language === 'en' ? '+ Add Your First Card' : '+ 新增第一張卡片'}</span>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Credit Cards Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -88,28 +178,45 @@ export const CardsTab: React.FC<CardsTabProps> = ({
               {/* Card Realistic Header Box */}
               <div className="space-y-4">
                 <div
-                  className={`w-full h-44 rounded-2xl bg-gradient-to-br ${card.colorGradient} p-5 border shadow-xl flex flex-col justify-between relative overflow-hidden`}
+                  className={`w-full h-48 rounded-2xl bg-gradient-to-br ${card.colorGradient} p-5 border shadow-xl flex flex-col justify-between relative overflow-hidden`}
                 >
-                  <div className="absolute right-4 top-4 text-xs font-bold text-white/30 tracking-widest uppercase">
-                    {card.network}
-                  </div>
                   <div className="flex items-center justify-between">
-                    <div>
-                      <span className="px-2.5 py-0.5 bg-black/40 text-white/90 border border-white/10 text-[10px] font-bold rounded-full backdrop-blur-md">
-                        {card.issuer} • {card.player} {t(language, 'cardHolder')}
+                    <span className="px-2.5 py-0.5 bg-black/40 text-white/90 border border-white/10 text-[10px] font-bold rounded-full backdrop-blur-md">
+                      {card.issuer} • {card.player} {t(language, 'cardHolder')}
+                    </span>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-xs font-bold text-white/40 tracking-widest uppercase">
+                        {card.network}
                       </span>
-                      <h3 className="text-lg font-extrabold text-white mt-1 tracking-tight drop-shadow-md">
-                        {card.name}
-                      </h3>
+                      <button
+                        onClick={() => handleDeleteCard(card)}
+                        title={t(language, 'deleteCard')}
+                        className="p-1.5 rounded-lg bg-black/30 hover:bg-rose-500/80 text-white/60 hover:text-white transition-all backdrop-blur-sm"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   </div>
 
+                  <h3 className="text-lg font-extrabold text-white tracking-tight drop-shadow-md">
+                    {card.name}
+                  </h3>
+
                   <div className="flex items-end justify-between border-t border-white/10 pt-3">
-                    <div>
-                      <div className="text-[10px] text-white/60 font-medium">{t(language, 'cardCurrentPoints')}</div>
-                      <div className="text-lg font-extrabold text-white tracking-wide">
-                        {card.currentBalance.toLocaleString()} <span className="text-xs font-normal text-amber-300">pts</span>
+                    <div className="flex items-center space-x-2">
+                      <div>
+                        <div className="text-[10px] text-white/60 font-medium">{t(language, 'cardCurrentPoints')}</div>
+                        <div className="text-lg font-extrabold text-white tracking-wide">
+                          {card.currentBalance.toLocaleString()} <span className="text-xs font-normal text-amber-300">{card.pointsCurrency || 'pts'}</span>
+                        </div>
                       </div>
+                      <button
+                        onClick={() => setEditingCard(card)}
+                        title={t(language, 'editBalance')}
+                        className="p-1.5 rounded-lg bg-black/30 hover:bg-indigo-600 text-white/80 hover:text-white transition-colors"
+                      >
+                        <Edit2 className="w-3 h-3" />
+                      </button>
                     </div>
 
                     <div className="text-right">
@@ -139,7 +246,7 @@ export const CardsTab: React.FC<CardsTabProps> = ({
                         <Sparkles className="w-3.5 h-3.5" />
                         <span>{t(language, 'msrDeadline')} (+{card.msr.bonusPoints.toLocaleString()} {card.pointsCurrency.split(' ')[0]})</span>
                       </span>
-                      <span className="text-slate-300">{card.msr.deadlineDaysRemaining} {t(language, 'daysRemaining')}</span>
+                      <span className="text-slate-300">{getMsrDaysRemaining(card)} {t(language, 'daysRemaining')}</span>
                     </div>
 
                     <div className="space-y-1">
@@ -266,6 +373,39 @@ export const CardsTab: React.FC<CardsTabProps> = ({
           onApplySpend={(amt) => onRecordMsrSpend(uploadingCardId, amt)}
         />
       )}
+
+      {/* Add Card Modal */}
+      <AddCardModal
+        isOpen={isAddCardOpen}
+        onClose={() => setIsAddCardOpen(false)}
+        onAddCard={(newCard) => addCard(newCard)}
+      />
+
+      {/* Edit Balance Modal */}
+      {editingCard && (
+        <EditBalanceModal
+          isOpen={Boolean(editingCard)}
+          onClose={() => setEditingCard(null)}
+          title={editingCard.name}
+          subtitle={`${editingCard.issuer} • ${editingCard.player}`}
+          currentBalance={editingCard.currentBalance}
+          currencyName={editingCard.pointsCurrency || 'Points'}
+          cppValue={editingCard.cppValue}
+          onSave={(newBal) => updateCardBalance(editingCard.id, newBal)}
+        />
+      )}
+
+      {/* Retention Helper Modal */}
+      <RetentionHelperModal
+        isOpen={isRetentionOpen}
+        onClose={() => setIsRetentionOpen(false)}
+      />
+
+      {/* Product Change & Downgrade Guide Modal */}
+      <ProductChangeGuideModal
+        isOpen={isProductChangeOpen}
+        onClose={() => setIsProductChangeOpen(false)}
+      />
     </div>
   );
 };

@@ -1,6 +1,7 @@
-import React from 'react';
-import { ShieldCheck, UserCheck, Wallet, Sparkles, Layers, Bell, Globe, Cloud, CloudOff } from 'lucide-react';
+import React, { useState } from 'react';
+import { ShieldCheck, UserCheck, Wallet, Sparkles, Layers, Bell, Globe, Cloud, CloudOff, HardDrive } from 'lucide-react';
 import type { UserProfile } from '../data/mockData';
+import { BackupRestoreModal } from './BackupRestoreModal';
 import { useAppStore } from '../store/useAppStore';
 import { t } from '../i18n/translations';
 
@@ -31,6 +32,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const language = useAppStore((s) => s.language);
   const setLanguage = useAppStore((s) => s.setLanguage);
+  const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 w-full glass-panel border-b border-slate-800 px-4 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
@@ -96,6 +98,15 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </div>
         </div>
+
+        {/* Backup & Restore Button */}
+        <button
+          onClick={() => setIsBackupModalOpen(true)}
+          title={t(language, 'backupRestoreTitle')}
+          className="p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-white transition-all"
+        >
+          <HardDrive className="w-4 h-4 text-indigo-400" />
+        </button>
 
         {/* Cloud Sync Button */}
         {typeof onOpenAuthModal === 'function' && (
@@ -185,6 +196,12 @@ export const Header: React.FC<HeaderProps> = ({
           <span>{t(language, 'privacyBadge')}</span>
         </div>
       </div>
+
+      {/* Backup & Restore Modal */}
+      <BackupRestoreModal
+        isOpen={isBackupModalOpen}
+        onClose={() => setIsBackupModalOpen(false)}
+      />
     </header>
   );
 };

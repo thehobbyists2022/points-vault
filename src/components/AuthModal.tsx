@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Lock, LogIn, UserPlus, X, ShieldCheck, Cloud, Loader2, AlertCircle } from 'lucide-react';
-import { signIn, signUp, isSupabaseConfigured } from '../lib/supabase';
-import { pullFromCloud } from '../lib/sync';
+import { signIn, signUp } from '../lib/supabase';
 import { useAppStore } from '../store/useAppStore';
-import { t } from '../i18n/translations';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -44,7 +42,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
             : '帳號已創建！請查看郵件完成驗證後登入。'
           );
         } else {
-          await pullFromCloud(userId);
           onSuccess(userId);
           onClose();
         }

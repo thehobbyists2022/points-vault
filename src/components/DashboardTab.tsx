@@ -1,15 +1,16 @@
+import React, { useState } from 'react';
 import {
-  Building2,
   Gift,
   AlertCircle,
   CheckCircle2,
   TrendingUp,
-  Clock,
   Sparkles,
   ArrowRight,
   ShieldCheck,
-  Plane,
   Ticket,
+  Smartphone,
+  Calendar,
+  Settings2,
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import type { CreditCard, HotelProgram, CarRentalProgram, AirlineProgram, UserProfile } from '../data/mockData';
@@ -17,6 +18,13 @@ import { countChase524Openings } from '../data/mockData';
 import { useAppStore } from '../store/useAppStore';
 import { t } from '../i18n/translations';
 import { loadHistory } from '../lib/portfolioHistory';
+import { generatePerksCalendarICS, downloadCalendarICS } from '../lib/calendarExport';
+import { getMsrDaysRemaining } from '../lib/msr';
+import { calculatePortfolioBreakdown } from '../lib/valuation';
+import { PassesRadarSection } from './PassesRadarSection';
+import { P2CheatSheetModal } from './P2CheatSheetModal';
+import { ProductChangeGuideModal } from './ProductChangeGuideModal';
+import { CppSettingsModal } from './CppSettingsModal';
 
 interface DashboardTabProps {
   cards: CreditCard[];
@@ -38,6 +46,13 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
   onNavigateTab,
 }) => {
   const language = useAppStore((s) => s.language);
+  const customCppRates = useAppStore((s) => s.customCppRates);
+
+  const [isP2ModalOpen, setIsP2ModalOpen] = useState(false);
+  const [isProductChangeModalOpen, setIsProductChangeModalOpen] = useState(false);
+  const [isCppModalOpen, setIsCppModalOpen] = useState(false);
+  const [showPassesRadar, setShowPassesRadar] = useState(false);
+  const [calDownloaded, setCalDownloaded] = useState(false);
 
   // Filter by active player
   const filteredCards = cards.filter(
@@ -53,22 +68,13 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
     (c) => profile.activePlayer === 'All' || c.player === profile.activePlayer
   );
 
-  // Math totals
-  const cardPointsValue = filteredCards.reduce(
-    (sum, c) => sum + (c.currentBalance * c.cppValue) / 100,
-    0
-  );
-  const airlinePointsValue = filteredAirlines.reduce(
-    (sum, a) => sum + (a.milesBalance * a.cppValue) / 100,
-    0
-  );
-  const hotelPointsValue = filteredHotels.reduce(
-    (sum, h) => sum + (h.pointsBalance * h.cppValue) / 100,
-    0
-  );
-  const totalValue = cardPointsValue + airlinePointsValue + hotelPointsValue;
-
-  const totalAnnualFees = filteredCards.reduce((sum, c) => sum + c.annualFee, 0);
+  // Unified Math totals with custom CPP
+  const {
+    cardValueUSD: cardPointsValue,
+    airlineValueUSD: airlinePointsValue,
+    hotelValueUSD: hotelPointsValue,
+    totalValueUSD: totalValue,
+  } = calculatePortfolioBreakdown(cards, airlines, hotels, customCppRates, profile.activePlayer);
 
   // Perks math
   const allPerks = filteredCards.flatMap((c) =>
@@ -91,6 +97,13 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
     .filter((a) => a.companionPass)
     .map((a) => ({ ...a.companionPass!, airlineName: a.name }));
 
+  const handleExportCalendar = () => {
+    const ics = generatePerksCalendarICS(cards, hotels, profile.p1Name, language);
+    downloadCalendarICS(ics, `PointsVault_Perks_${profile.p1Name}.ics`);
+    setCalDownloaded(true);
+    setTimeout(() => setCalDownloaded(false), 3000);
+  };
+
   return (
     <div className="space-y-6">
       {/* Top Welcome Banner */}
@@ -103,25 +116,86 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
               <span>{t(language, 'dashControlPanel')}</span>
             </div>
             <h2 className="text-2xl font-extrabold text-white tracking-tight">
-              {t(language, 'dashWelcome')}，{profile.activePlayer === 'All' ? t(language, 'dashFamilyView') : profile.activePlayer}！
+              {t(language, 'dashWelcome')}{language === 'en' ? ', ' : '，'}{profile.activePlayer === 'All' ? t(language, 'dashFamilyView') : profile.activePlayer}{language === 'en' ? '!' : '！'}
             </h2>
             <p className="text-xs text-slate-300 mt-1 max-w-2xl">
-              {t(language, 'dashManaging')} <span className="text-indigo-300 font-bold">{filteredCards.length} {t(language, 'dashCreditCards')}</span>、
-              <span className="text-sky-300 font-bold">{filteredAirlines.length} {t(language, 'dashAirlinePrograms')}</span>、
-              <span className="text-purple-300 font-bold">{filteredHotels.length} {t(language, 'dashHotelPrograms')}</span> 以及{' '}
-              <span className="text-emerald-300 font-bold">{filteredCars.length} {t(language, 'dashCarMemberships')}</span>。
+              {t(language, 'dashManaging')} <span className="text-indigo-300 font-bold">{filteredCards.length} {t(language, 'dashCreditCards')}</span>{language === 'en' ? ', ' : '、'}
+              <span className="text-sky-300 font-bold">{filteredAirlines.length} {t(language, 'dashAirlinePrograms')}</span>{language === 'en' ? ', ' : '、'}
+              <span className="text-purple-300 font-bold">{filteredHotels.length} {t(language, 'dashHotelPrograms')}</span>{language === 'en' ? ' and ' : ' 以及 '}
+              <span className="text-emerald-300 font-bold">{filteredCars.length} {t(language, 'dashCarMemberships')}</span>{language === 'en' ? '.' : '。'}
             </p>
           </div>
 
-          <button
-            onClick={() => onNavigateTab('merchant')}
-            className="px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-amber-500/20 transition-all flex items-center space-x-2 shrink-0 cursor-pointer"
-          >
-            <TrendingUp className="w-4 h-4" />
-            <span>{t(language, 'dashFindBestCard')}</span>
-          </button>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <button
+              onClick={() => onNavigateTab('merchant')}
+              className="px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-amber-500/20 transition-all flex items-center space-x-2 shrink-0 cursor-pointer"
+            >
+              <TrendingUp className="w-4 h-4" />
+              <span>{t(language, 'dashFindBestCard')}</span>
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Quick Action Strategy Bar (P2 Cheat Sheet, Downgrade Guide, CPP Adjuster, Calendar) */}
+      <div className="flex flex-wrap items-center gap-2.5 glass-panel rounded-2xl p-3 border border-slate-800 bg-slate-950/80">
+        <button
+          onClick={() => setShowPassesRadar(!showPassesRadar)}
+          className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 active:scale-95 border ${
+            showPassesRadar
+              ? 'bg-amber-600 text-white border-amber-500 shadow-md shadow-amber-500/30'
+              : 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border-amber-500/30'
+          }`}
+        >
+          <Ticket className="w-3.5 h-3.5 text-amber-400" />
+          <span>{language === 'en' ? '🎫 FNC & Passes Radar' : '🎫 房券與伴飛券雷達'}</span>
+        </button>
+
+        <button
+          onClick={() => setIsP2ModalOpen(true)}
+          className="px-3.5 py-2 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs font-bold flex items-center space-x-1.5 active:scale-95 transition-all"
+        >
+          <Smartphone className="w-3.5 h-3.5 text-indigo-400" />
+          <span>{language === 'en' ? `📱 ${profile.p2Name} Wallet Memo` : `📱 ${profile.p2Name} 專屬刷卡便簽`}</span>
+        </button>
+
+        <button
+          onClick={() => setIsProductChangeModalOpen(true)}
+          className="px-3.5 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center space-x-1.5 active:scale-95 transition-all"
+        >
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+          <span>{language === 'en' ? '🛡️ Safe Downgrade Guide' : '🛡️ 安全降級保點向導'}</span>
+        </button>
+
+        <button
+          onClick={() => setIsCppModalOpen(true)}
+          className="px-3.5 py-2 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 text-xs font-bold flex items-center space-x-1.5 active:scale-95 transition-all"
+        >
+          <Settings2 className="w-3.5 h-3.5 text-purple-400" />
+          <span>{language === 'en' ? '⚙️ Custom CPP Valuation' : '⚙️ 自訂 CPP 估值'}</span>
+        </button>
+
+        <button
+          onClick={handleExportCalendar}
+          className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 text-xs font-bold flex items-center space-x-1.5 active:scale-95 transition-all ml-auto"
+        >
+          {calDownloaded ? (
+            <>
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+              <span>{language === 'en' ? 'Exported!' : '已導出日曆！'}</span>
+            </>
+          ) : (
+            <>
+              <Calendar className="w-3.5 h-3.5 text-sky-400" />
+              <span>{language === 'en' ? '📅 Sync to Calendar (.ics)' : '📅 導出福利日曆 (.ics)'}</span>
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* Render Passes Radar if toggled */}
+      {showPassesRadar && <PassesRadarSection />}
 
       {/* KPI Metric Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -198,25 +272,29 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
               <span className="text-xs text-emerald-400 font-semibold ml-1">
                 {(profile.activePlayer === 'P2' ? countChase524Openings(profile.chase524OpeningsP2) : countChase524Openings(profile.chase524OpeningsP1)) < 5
                   ? t(language, 'dashCanApply')
-                  : t(language, 'dash524Blocked')}
+                  : t(language, 'dashNeedWait')}
               </span>
             </div>
-            <div className="text-[11px] text-slate-400 mt-1">{t(language, 'dashAnnualFees')}: ${totalAnnualFees}</div>
+            <div className="text-[11px] text-slate-400 mt-1">
+              {t(language, 'dashRollingWindow')}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* MSR Spend Tracker Widget */}
+      {/* MSR Active Spend Targets Alert */}
       {cardsWithMSR.length > 0 && (
-        <div className="glass-panel rounded-2xl p-5 border border-amber-500/30 bg-amber-950/10 space-y-4">
+        <div className="glass-panel rounded-3xl p-6 border border-slate-800 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Clock className="w-5 h-5 text-amber-400" />
-              <h3 className="text-base font-bold text-white">{t(language, 'dashMsrTracker')}</h3>
+              <AlertCircle className="w-5 h-5 text-amber-400" />
+              <h3 className="text-base font-bold text-white">
+                {t(language, 'dashMSRTargets')} ({cardsWithMSR.length})
+              </h3>
             </div>
             <button
               onClick={() => onNavigateTab('cards')}
-              className="text-xs font-semibold text-amber-400 hover:text-amber-300 flex items-center space-x-1"
+              className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center space-x-1 font-semibold"
             >
               <span>{t(language, 'dashManageCards')}</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -226,36 +304,40 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {cardsWithMSR.map((card) => {
               const msr = card.msr!;
-              const progressPct = Math.min(100, Math.round((msr.currentSpend / msr.requiredSpend) * 100));
-              const remainingSpend = msr.requiredSpend - msr.currentSpend;
+              const percent = Math.min(100, Math.round((msr.currentSpend / msr.requiredSpend) * 100));
+              const isCompleted = msr.currentSpend >= msr.requiredSpend;
+
               return (
-                <div key={card.id} className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 space-y-3">
+                <div
+                  key={card.id}
+                  className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3"
+                >
                   <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="text-sm font-bold text-white">{card.name}</h4>
-                      <div className="text-xs text-amber-300 font-medium mt-0.5">
-                        {t(language, 'dashBonus')}: +{msr.bonusPoints.toLocaleString()} {card.pointsCurrency}
-                      </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-slate-800 text-slate-300 border border-slate-700">
+                        {card.player}
+                      </span>
+                      <span className="text-sm font-bold text-white truncate">{card.name}</span>
                     </div>
-                    <span className="px-2.5 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold rounded-lg">
-                      {msr.deadlineDaysRemaining} {t(language, 'dashDaysLeft')}
+                    <span className="text-xs font-black text-amber-400">
+                      +{msr.bonusPoints.toLocaleString()} {card.pointsCurrency.split(' ')[0]}
                     </span>
                   </div>
 
-                  {/* Progress Bar */}
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-xs font-medium text-slate-300">
-                      <span>{t(language, 'dashCompleted')} ${msr.currentSpend.toLocaleString()}</span>
-                      <span>{t(language, 'dashTarget')} ${msr.requiredSpend.toLocaleString()} ({progressPct}%)</span>
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-xs text-slate-400">
+                      <span>${msr.currentSpend.toLocaleString()} / ${msr.requiredSpend.toLocaleString()}</span>
+                      <span className={isCompleted ? 'text-emerald-400 font-bold' : 'text-amber-400'}>
+                        {isCompleted ? t(language, 'dashCompleted') : `${t(language, 'dashRemaining')} ${getMsrDaysRemaining(card)} ${t(language, 'daysRemaining')}`}
+                      </span>
                     </div>
-                    <div className="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
+                    <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-amber-500 to-emerald-400 rounded-full transition-all duration-500"
-                        style={{ width: `${progressPct}%` }}
+                        className={`h-full rounded-full transition-all duration-500 ${
+                          isCompleted ? 'bg-emerald-500' : 'bg-gradient-to-r from-amber-500 to-indigo-500'
+                        }`}
+                        style={{ width: `${percent}%` }}
                       />
-                    </div>
-                    <div className="text-[11px] text-slate-400 text-right">
-                      {t(language, 'dashNeedSpend')}: <span className="text-amber-400 font-bold">${remainingSpend.toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
@@ -265,131 +347,43 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
         </div>
       )}
 
-      {/* Two Column Layout: Unclaimed Perks & Companion Pass/FNC */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Unclaimed Card Perks Checklist */}
-        <div className="glass-panel rounded-2xl p-5 border border-slate-800 space-y-4">
+      {/* Unclaimed Monthly Perks Section */}
+      {unclaimedPerks.length > 0 && (
+        <div className="glass-panel rounded-3xl p-6 border border-slate-800 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Gift className="w-5 h-5 text-amber-400" />
-              <h3 className="text-base font-bold text-white">{t(language, 'dashPerksChecklist')}</h3>
+              <Gift className="w-5 h-5 text-indigo-400" />
+              <h3 className="text-base font-bold text-white">
+                {t(language, 'dashMonthlyPerks')}
+              </h3>
             </div>
-            <span className="text-xs text-slate-400">{unclaimedPerks.length} {t(language, 'dashItemsToUse')}</span>
+            <span className="text-xs text-slate-400 font-medium">
+              {t(language, 'dashTickToSave')}
+            </span>
           </div>
 
-          <div className="space-y-2.5 max-h-96 overflow-y-auto pr-1">
-            {allPerks.map((perk) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {unclaimedPerks.map((perk) => (
               <div
-                key={perk.id}
+                key={`${perk.cardId}-${perk.id}`}
                 onClick={() => onTogglePerk(perk.cardId, perk.id)}
-                className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
-                  perk.used
-                    ? 'bg-slate-950/40 border-slate-800 text-slate-500 line-through opacity-70'
-                    : 'bg-slate-900/80 border-slate-700/80 hover:border-amber-500/50 text-slate-200'
-                }`}
+                className="p-3 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-indigo-500/40 rounded-2xl cursor-pointer transition-all flex items-center justify-between group"
               >
-                <div className="flex items-center space-x-3">
-                  {perk.used ? (
-                    <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
-                  ) : (
-                    <AlertCircle className="w-5 h-5 text-amber-400 shrink-0" />
-                  )}
-                  <div>
-                    <div className="text-xs font-bold text-slate-100">{perk.title}</div>
-                    <div className="text-[11px] text-slate-400 flex items-center space-x-2 mt-0.5">
-                      <span>{perk.cardName}</span>
-                      <span>•</span>
-                      <span className="text-amber-300 font-medium">{t(language, 'dashResetCycle')}: {perk.frequency}</span>
-                    </div>
-                  </div>
+                <div className="space-y-0.5 min-w-0 pr-2">
+                  <div className="text-[10px] text-slate-400 truncate">{perk.cardName}</div>
+                  <div className="text-xs font-bold text-white truncate">{perk.title}</div>
                 </div>
-
-                <div className="text-right shrink-0">
-                  <div className="text-xs font-bold text-emerald-400">${perk.value}</div>
-                  <span className="text-[10px] text-slate-400">
-                    {perk.used ? t(language, 'dashMarkedClaimed') : t(language, 'dashClickToMark')}
-                  </span>
+                <div className="flex items-center space-x-2 shrink-0">
+                  <span className="text-xs font-black text-emerald-400">${perk.value}</span>
+                  <div className="w-5 h-5 rounded-lg border border-slate-700 group-hover:border-indigo-500 flex items-center justify-center">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-transparent group-hover:text-slate-600" />
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
-
-        {/* Airline Companion Pass & Hotel FNC Alert */}
-        <div className="glass-panel rounded-2xl p-5 border border-slate-800 space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Plane className="w-5 h-5 text-sky-400" />
-              <h3 className="text-base font-bold text-white">{t(language, 'dashCompanionAlerts')}</h3>
-            </div>
-            <button
-              onClick={() => onNavigateTab('airlines')}
-              className="text-xs font-semibold text-sky-400 hover:text-sky-300 flex items-center space-x-1"
-            >
-              <span>{t(language, 'dashViewMiles')}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          <div className="space-y-3">
-            {/* Airline Companion Certificate */}
-            {companionPasses.map((cp, idx) => (
-              <div
-                key={idx}
-                className="bg-slate-900/90 border border-sky-500/30 rounded-xl p-3.5 flex items-center justify-between"
-              >
-                <div className="space-y-1">
-                  <div className="flex items-center space-x-2">
-                    <span className="px-2 py-0.5 bg-sky-500/20 text-sky-300 border border-sky-500/30 text-[10px] font-bold rounded">
-                      {cp.airlineName.split(' ')[0]}
-                    </span>
-                    <span className="text-xs font-bold text-white">{cp.title}</span>
-                  </div>
-                  <div className="text-xs text-slate-400">
-                    {t(language, 'dashStatus')}: <span className="text-emerald-400 font-semibold">{cp.isUnlocked ? t(language, 'dashUnlocked') : t(language, 'dashAccumulating')}</span>
-                  </div>
-                </div>
-
-                <div className="text-right shrink-0">
-                  <div className="text-xs font-bold text-rose-400 flex items-center space-x-1 justify-end">
-                    <Clock className="w-3.5 h-3.5" />
-                    <span>{cp.expiryDate} {t(language, 'dashExpiry')}</span>
-                  </div>
-                  <div className="text-[10px] text-slate-400 mt-0.5">{t(language, 'dashSaveUsd')}$300-$800</div>
-                </div>
-              </div>
-            ))}
-
-            {/* Hotel FNC */}
-            {activeFNCs.map((fnc) => (
-              <div
-                key={fnc.id}
-                className="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 flex items-center justify-between"
-              >
-                <div className="space-y-1">
-                  <div className="flex items-center space-x-2">
-                    <span className="px-2 py-0.5 bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[10px] font-bold rounded">
-                      {fnc.hotelName}
-                    </span>
-                    <span className="text-xs font-bold text-white">{fnc.title}</span>
-                  </div>
-                  <div className="text-xs text-slate-400">
-                    {t(language, 'dashCategoryLimit')}: <span className="text-slate-200 font-medium">{fnc.categoryLimit}</span>
-                  </div>
-                </div>
-
-                <div className="text-right shrink-0">
-                  <div className="text-xs font-bold text-rose-400 flex items-center space-x-1 justify-end">
-                    <Clock className="w-3.5 h-3.5" />
-                    <span>{fnc.expirationDate} {t(language, 'dashExpiry')}</span>
-                  </div>
-                  <div className="text-[10px] text-slate-400 mt-0.5">{t(language, 'dashEstValue')}$250-$500</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      )}
 
       {/* Portfolio Value History Chart */}
       {loadHistory().length >= 2 && (
@@ -425,6 +419,22 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
           </ResponsiveContainer>
         </div>
       )}
+
+      {/* Modals */}
+      <P2CheatSheetModal
+        isOpen={isP2ModalOpen}
+        onClose={() => setIsP2ModalOpen(false)}
+      />
+
+      <ProductChangeGuideModal
+        isOpen={isProductChangeModalOpen}
+        onClose={() => setIsProductChangeModalOpen(false)}
+      />
+
+      <CppSettingsModal
+        isOpen={isCppModalOpen}
+        onClose={() => setIsCppModalOpen(false)}
+      />
     </div>
   );
 };

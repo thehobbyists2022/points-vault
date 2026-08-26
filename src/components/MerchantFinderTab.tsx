@@ -12,19 +12,20 @@ interface MerchantFinderTabProps {
 interface CategoryOption {
   id: string;
   name: string;
+  nameEn: string;
   icon: string;
   exampleMerchants: string;
 }
 
 const CATEGORIES: CategoryOption[] = [
-  { id: 'dining', name: '餐厅与外卖 (Dining & Restaurants)', icon: '🍽️', exampleMerchants: 'UberEats, DoorDash, Starbucks, Local Restaurants' },
-  { id: 'grocery', name: '超市采购 (US Supermarkets)', icon: '🛒', exampleMerchants: 'Whole Foods, Trader Joe\'s, Instacart, Kroger' },
-  { id: 'flights', name: '机票预订 (Flights Direct/Amex)', icon: '✈️', exampleMerchants: 'United, Delta, American Airlines, Amex Travel' },
-  { id: 'hotels', name: '酒店住宿 (Prepaid Hotels)', icon: '🏨', exampleMerchants: 'Hyatt, Marriott, Hilton, Travel Portals' },
-  { id: 'rent', name: '房屋租金 (Rent Payments)', icon: '🏠', exampleMerchants: 'Bilt Rent, Property Management Portals' },
-  { id: 'gas', name: '加油站 (Gas Stations)', icon: '⛽', exampleMerchants: 'Shell, Chevron, Exxon Mobil' },
-  { id: 'transit', name: '打车与公交 (Transit & Rideshare)', icon: '🚖', exampleMerchants: 'Uber, Lyft, Subways, Tolls' },
-  { id: 'general', name: '日常无类别消费 (Everyday Shopping)', icon: '📦', exampleMerchants: 'Amazon, Target, Utility Bills' },
+  { id: 'dining', name: '餐厅与外卖 (Dining & Restaurants)', nameEn: 'Dining & Restaurants', icon: '🍽️', exampleMerchants: 'UberEats, DoorDash, Starbucks, Local Restaurants' },
+  { id: 'grocery', name: '超市采购 (US Supermarkets)', nameEn: 'US Supermarkets', icon: '🛒', exampleMerchants: 'Whole Foods, Trader Joe\'s, Instacart, Kroger' },
+  { id: 'flights', name: '机票预订 (Flights Direct/Amex)', nameEn: 'Flights (Direct/Amex)', icon: '✈️', exampleMerchants: 'United, Delta, American Airlines, Amex Travel' },
+  { id: 'hotels', name: '酒店住宿 (Prepaid Hotels)', nameEn: 'Hotels (Prepaid)', icon: '🏨', exampleMerchants: 'Hyatt, Marriott, Hilton, Travel Portals' },
+  { id: 'rent', name: '房屋租金 (Rent Payments)', nameEn: 'Rent Payments', icon: '🏠', exampleMerchants: 'Bilt Rent, Property Management Portals' },
+  { id: 'gas', name: '加油站 (Gas Stations)', nameEn: 'Gas Stations', icon: '⛽', exampleMerchants: 'Shell, Chevron, Exxon Mobil' },
+  { id: 'transit', name: '打车与公交 (Transit & Rideshare)', nameEn: 'Transit & Rideshare', icon: '🚖', exampleMerchants: 'Uber, Lyft, Subways, Tolls' },
+  { id: 'general', name: '日常无类别消费 (Everyday Shopping)', nameEn: 'Everyday Shopping', icon: '📦', exampleMerchants: 'Amazon, Target, Utility Bills' },
 ];
 
 // Word-boundary keywords per category so "Travel" never matches "Transit"
@@ -149,7 +150,7 @@ export const MerchantFinderTab: React.FC<MerchantFinderTabProps> = ({ cards, pro
           >
             <div className="text-2xl mb-1">{cat.icon}</div>
             <div>
-              <div className="text-xs font-bold">{cat.name.split(' ')[0]}</div>
+              <div className="text-xs font-bold">{language === 'en' ? cat.nameEn : cat.name.split(' ')[0]}</div>
               <div className="text-[10px] text-slate-400 line-clamp-1">{cat.exampleMerchants}</div>
             </div>
           </button>

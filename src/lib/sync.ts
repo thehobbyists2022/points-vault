@@ -7,7 +7,7 @@ import type { Language } from '../i18n/translations';
 export async function pushToCloud(userId: string): Promise<void> {
   if (!isSupabaseConfigured) return;
 
-  const { cards, profile, language } = useAppStore.getState();
+  const { cards, airlines, hotels, profile, language } = useAppStore.getState();
 
   // Sync settings
   await supabase.from('user_settings').upsert({
@@ -33,15 +33,41 @@ export async function pushToCloud(userId: string): Promise<void> {
   await supabase.from('user_card_states').upsert(cardStates, {
     onConflict: 'user_id,card_id',
   });
+
+  // Sync editable program balances (airline miles / hotel points + FNC usage)
+  const programStates = [
+    ...airlines.map(air => ({
+      user_id: userId,
+      program_type: 'airline',
+      program_id: air.id,
+      balance: air.milesBalance,
+      fnc_used: {},
+      updated_at: new Date().toISOString(),
+    })),
+    ...hotels.map(hotel => ({
+      user_id: userId,
+      program_type: 'hotel',
+      program_id: hotel.id,
+      balance: hotel.pointsBalance,
+      fnc_used: Object.fromEntries(hotel.fncs.map(f => [f.id, f.isUsed])),
+      updated_at: new Date().toISOString(),
+    })),
+  ];
+  if (programStates.length > 0) {
+    await supabase.from('user_program_states').upsert(programStates, {
+      onConflict: 'user_id,program_type,program_id',
+    });
+  }
 }
 
 // ── Pull Supabase → local store ───────────────────────────────
 export async function pullFromCloud(userId: string): Promise<void> {
   if (!isSupabaseConfigured) return;
 
-  const [settingsRes, cardStatesRes] = await Promise.all([
+  const [settingsRes, cardStatesRes, programStatesRes] = await Promise.all([
     supabase.from('user_settings').select('*').eq('user_id', userId).maybeSingle(),
     supabase.from('user_card_states').select('*').eq('user_id', userId),
+    supabase.from('user_program_states').select('*').eq('user_id', userId),
   ]);
 
   const store = useAppStore.getState();
@@ -76,6 +102,33 @@ export async function pullFromCloud(userId: string): Promise<void> {
       };
     });
     store.setCards(updatedCards);
+  }
+
+  if (programStatesRes.data && programStatesRes.data.length > 0) {
+    const remoteStates = programStatesRes.data;
+    const updatedAirlines = store.airlines.map(air => {
+      const remote = remoteStates.find(
+        r => r.program_type === 'airline' && r.program_id === air.id
+      );
+      if (!remote) return air;
+      return { ...air, milesBalance: remote.balance ?? air.milesBalance };
+    });
+    const updatedHotels = store.hotels.map(hotel => {
+      const remote = remoteStates.find(
+        r => r.program_type === 'hotel' && r.program_id === hotel.id
+      );
+      if (!remote) return hotel;
+      return {
+        ...hotel,
+        pointsBalance: remote.balance ?? hotel.pointsBalance,
+        fncs: hotel.fncs.map(fnc => ({
+          ...fnc,
+          isUsed: (remote.fnc_used as Record<string, boolean>)?.[fnc.id] ?? fnc.isUsed,
+        })),
+      };
+    });
+    store.setAirlines(updatedAirlines);
+    store.setHotels(updatedHotels);
   }
 }
 

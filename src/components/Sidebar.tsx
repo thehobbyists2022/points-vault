@@ -10,6 +10,7 @@ import {
   ShieldAlert,
   Sparkles,
   Gift,
+  Landmark,
 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { t, type translations } from '../i18n/translations';
@@ -23,6 +24,7 @@ export type TabType =
   | 'merchant'
   | 'transfers'
   | 'rules524'
+  | 'bankBonuses'
   | 'affiliate';
 
 interface SidebarProps {
@@ -39,6 +41,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   fncCount,
 }) => {
   const language = useAppStore((s) => s.language);
+  const bankBonuses = useAppStore((s) => s.bankBonuses || []);
+  const activeBankCount = bankBonuses.filter((b) => b.status === 'in_progress').length;
 
   const menuItems: { id: TabType; translationKey: keyof typeof translations['en']; icon: React.ElementType; badge: string | null; badgeColor?: string }[] = [
     {
@@ -95,6 +99,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       icon: ShieldAlert,
       badge: 'Chase 5/24',
       badgeColor: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+    },
+    {
+      id: 'bankBonuses',
+      translationKey: 'tabBankBonuses',
+      icon: Landmark,
+      badge: activeBankCount > 0 ? `${activeBankCount} ${language === 'en' ? 'Active' : '進行中'}` : '$4,850+ DD',
+      badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
     },
     {
       id: 'affiliate',

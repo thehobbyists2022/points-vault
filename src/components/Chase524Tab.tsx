@@ -1,6 +1,22 @@
 import React, { useState } from 'react';
-import { ShieldAlert, Info, Plus, Trash2 } from 'lucide-react';
-import { CARD_APPLICATION_RULES, UserProfile, countChase524Openings } from '../data/mockData';
+import {
+  ShieldAlert,
+  Info,
+  Plus,
+  Trash2,
+  Compass,
+  Flame,
+  CheckCircle2,
+  Sparkles,
+  Zap,
+} from 'lucide-react';
+import {
+  CARD_APPLICATION_RULES,
+  BEGINNER_ROADMAP_STAGES,
+  UserProfile,
+  countChase524Openings,
+} from '../data/mockData';
+import { OfferRadarSection } from './OfferRadarSection';
 import { useAppStore } from '../store/useAppStore';
 import { t } from '../i18n/translations';
 
@@ -67,7 +83,7 @@ const PlayerPanel: React.FC<PlayerPanelProps> = ({ playerName, openings, onAdd, 
     if (!newDate) return;
     const d = new Date(`${newDate}T00:00:00`);
     if (isNaN(d.getTime())) return;
-    if (daysUntil(addMonths(newDate, ROLLING_MONTHS)) < 0) return; // already out of window
+    if (daysUntil(addMonths(newDate, ROLLING_MONTHS)) < 0) return;
     onAdd(newDate);
     setNewDate('');
   };
@@ -96,9 +112,9 @@ const PlayerPanel: React.FC<PlayerPanelProps> = ({ playerName, openings, onAdd, 
       <div className="space-y-2">
         <div className="flex items-center justify-between text-xs text-slate-300">
           <span>
-            {t(language, 'rulesOpenCount')} {ROLLING_MONTHS} {t(language, 'rulesMonths')}: <strong>{count} 张</strong>
+            {t(language, 'rulesOpenCount')} {ROLLING_MONTHS} {t(language, 'rulesMonths')}: <strong>{count} {language === 'en' ? 'Cards' : '張'}</strong>
           </span>
-          <span>{t(language, 'rulesQuota')}: 5 张</span>
+          <span>{t(language, 'rulesQuota')}: 5 {language === 'en' ? 'Cards' : '張'}</span>
         </div>
         <div className="grid grid-cols-5 gap-2">
           {[1, 2, 3, 4, 5].map((slot) => (
@@ -177,6 +193,8 @@ const PlayerPanel: React.FC<PlayerPanelProps> = ({ playerName, openings, onAdd, 
 
 export const Chase524Tab: React.FC<Chase524TabProps> = ({ profile, setProfile, onAddOpening, onRemoveOpening }) => {
   const language = useAppStore((s) => s.language);
+  const [activeSubTab, setActiveSubTab] = useState<'monitor' | 'roadmap' | 'radar'>('monitor');
+
   const handleAdd = (player: 'P1' | 'P2') => (date: string) => {
     if (onAddOpening) {
       onAddOpening(player, date);
@@ -201,59 +219,181 @@ export const Chase524Tab: React.FC<Chase524TabProps> = ({ profile, setProfile, o
 
   return (
     <div className="space-y-6">
-      {/* Header Banner */}
-      <div className="glass-panel rounded-2xl p-5 border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-lg font-bold text-white flex items-center space-x-2">
-            <ShieldAlert className="w-5 h-5 text-purple-400" />
-            <span>{t(language, 'rulesTitle')}</span>
-          </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
-            {t(language, 'rulesDesc')}
-          </p>
-        </div>
+      {/* Sub-Tab Switcher */}
+      <div className="flex flex-wrap items-center gap-3 glass-panel rounded-2xl p-2.5 border border-slate-800 bg-slate-950/80">
+        <button
+          onClick={() => setActiveSubTab('monitor')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 ${
+            activeSubTab === 'monitor'
+              ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/20'
+              : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          <ShieldAlert className="w-4 h-4" />
+          <span>{language === 'en' ? '5/24 Monitor & Bank Rules' : '5/24 儀表盤 & 銀行規則'}</span>
+        </button>
+
+        <button
+          onClick={() => setActiveSubTab('roadmap')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 ${
+            activeSubTab === 'roadmap'
+              ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
+              : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          <Compass className="w-4 h-4" />
+          <span>{language === 'en' ? '🧭 Beginner Application Roadmap' : '🧭 新手申卡順序路線圖'}</span>
+        </button>
+
+        <button
+          onClick={() => setActiveSubTab('radar')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 ${
+            activeSubTab === 'radar'
+              ? 'bg-amber-600 text-white shadow-lg shadow-amber-500/20'
+              : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          <Flame className="w-4 h-4" />
+          <span>{language === 'en' ? '🔥 ATH Welcome Bonus Radar' : '🔥 史高開卡禮雷達'}</span>
+        </button>
       </div>
 
-      {/* Chase 5/24 Rolling Window Panels for P1 & P2 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <PlayerPanel
-          playerName={profile.p1Name}
-          openings={profile.chase524OpeningsP1}
-          onAdd={handleAdd('P1')}
-          onRemove={handleRemove('P1')}
-        />
-        <PlayerPanel
-          playerName={profile.p2Name}
-          openings={profile.chase524OpeningsP2}
-          onAdd={handleAdd('P2')}
-          onRemove={handleRemove('P2')}
-        />
-      </div>
+      {activeSubTab === 'radar' && <OfferRadarSection />}
 
-      {/* Bank Rules Reference Knowledge Base */}
-      <div className="glass-panel rounded-3xl p-6 border border-slate-800 space-y-4">
-        <h3 className="text-base font-bold text-white flex items-center space-x-2">
-          <Info className="w-5 h-5 text-indigo-400" />
-          <span>{t(language, 'rulesEncyclopedia')}</span>
-        </h3>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {CARD_APPLICATION_RULES.map((rule, idx) => (
-            <div key={idx} className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="px-2.5 py-0.5 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs font-bold rounded-md">
-                  {rule.bank}
-                </span>
-                <span className="text-xs font-bold text-white">{rule.ruleName}</span>
-              </div>
-              <p className="text-xs text-slate-300 leading-relaxed">{rule.description}</p>
-              <div className="p-2.5 bg-slate-950 rounded-xl text-[11px] text-amber-300 border border-slate-800">
-                💡 <strong>{t(language, 'rulesTips')}:</strong> {rule.tips}
+      {activeSubTab === 'roadmap' && (
+        <div className="space-y-6">
+          {/* Roadmap Header */}
+          <div className="glass-panel rounded-3xl p-6 border border-slate-800 bg-gradient-to-r from-indigo-950/40 via-slate-900 to-purple-950/40 space-y-2">
+            <div className="flex items-center space-x-2">
+              <span className="p-2.5 bg-indigo-500/10 border border-indigo-500/30 rounded-2xl text-indigo-400">
+                <Compass className="w-6 h-6" />
+              </span>
+              <div>
+                <h3 className="text-lg font-black text-white">{t(language, 'roadmapTitle')}</h3>
+                <p className="text-xs text-slate-300 mt-0.5">{t(language, 'roadmapDesc')}</p>
               </div>
             </div>
-          ))}
+          </div>
+
+          {/* 4 Stages Tree */}
+          <div className="space-y-4">
+            {BEGINNER_ROADMAP_STAGES.map((stage) => (
+              <div
+                key={stage.stageNumber}
+                className="glass-panel rounded-3xl p-6 border border-slate-800 hover:border-indigo-500/40 transition-all space-y-4 relative bg-slate-950/70"
+              >
+                {/* Stage Header */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                  <div className="flex items-center space-x-3">
+                    <span className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white font-black text-sm flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                      {stage.stageNumber}
+                    </span>
+                    <div>
+                      <h4 className="text-base font-bold text-white">{stage.title}</h4>
+                      <span className="text-xs text-slate-400">{stage.subtitle}</span>
+                    </div>
+                  </div>
+
+                  <span className="px-3 py-1 bg-slate-900 text-indigo-300 border border-indigo-500/20 text-xs font-semibold rounded-xl self-start sm:self-auto">
+                    {t(language, 'stage')} {stage.stageNumber}
+                  </span>
+                </div>
+
+                {/* Why this stage */}
+                <div className="space-y-1">
+                  <span className="text-xs font-bold text-slate-300 flex items-center space-x-1">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                    <span>{t(language, 'whyThisStage')}</span>
+                  </span>
+                  <p className="text-xs text-slate-400 leading-relaxed pl-4 border-l-2 border-indigo-500/30">
+                    {stage.whyThisOrder}
+                  </p>
+                </div>
+
+                {/* Recommended Target Cards */}
+                <div className="space-y-1.5">
+                  <span className="text-xs font-bold text-slate-300">{t(language, 'recommendedCards')}:</span>
+                  <div className="flex flex-wrap gap-2">
+                    {stage.targetCards.map((cardName, idx) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1.5 bg-slate-900 text-slate-200 border border-slate-700 text-xs font-bold rounded-xl shadow-sm flex items-center space-x-1.5"
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>{cardName}</span>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Pro Tips */}
+                <div className="bg-slate-900/60 p-3 rounded-2xl border border-slate-800 text-xs text-amber-300 flex items-center space-x-2">
+                  <Zap className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span><strong>{t(language, 'proTips')}:</strong> {stage.tips}</span>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
+
+      {activeSubTab === 'monitor' && (
+        <div className="space-y-6">
+          {/* Header Banner */}
+          <div className="glass-panel rounded-2xl p-5 border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-bold text-white flex items-center space-x-2">
+                <ShieldAlert className="w-5 h-5 text-purple-400" />
+                <span>{t(language, 'rulesTitle')}</span>
+              </h2>
+              <p className="text-xs text-slate-400 mt-0.5">
+                {t(language, 'rulesDesc')}
+              </p>
+            </div>
+          </div>
+
+          {/* Chase 5/24 Rolling Window Panels for P1 & P2 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <PlayerPanel
+              playerName={profile.p1Name}
+              openings={profile.chase524OpeningsP1}
+              onAdd={handleAdd('P1')}
+              onRemove={handleRemove('P1')}
+            />
+            <PlayerPanel
+              playerName={profile.p2Name}
+              openings={profile.chase524OpeningsP2}
+              onAdd={handleAdd('P2')}
+              onRemove={handleRemove('P2')}
+            />
+          </div>
+
+          {/* Bank Rules Reference Knowledge Base */}
+          <div className="glass-panel rounded-3xl p-6 border border-slate-800 space-y-4">
+            <h3 className="text-base font-bold text-white flex items-center space-x-2">
+              <Info className="w-5 h-5 text-indigo-400" />
+              <span>{t(language, 'rulesEncyclopedia')}</span>
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {CARD_APPLICATION_RULES.map((rule, idx) => (
+                <div key={idx} className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="px-2.5 py-0.5 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs font-bold rounded-md">
+                      {rule.bank}
+                    </span>
+                    <span className="text-xs font-bold text-white">{rule.ruleName}</span>
+                  </div>
+                  <p className="text-xs text-slate-300 leading-relaxed">{rule.description}</p>
+                  <div className="p-2.5 bg-slate-950 rounded-xl text-[11px] text-amber-300 border border-slate-800">
+                    💡 <strong>{t(language, 'rulesTips')}:</strong> {rule.tips}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

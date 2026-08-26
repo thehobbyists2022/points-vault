@@ -25,8 +25,10 @@ export async function getUser() {
   return data.user;
 }
 
-export function onAuthStateChange(callback: (userId: string | null) => void) {
-  return supabase.auth.onAuthStateChange((_event, session) => {
-    callback(session?.user?.id ?? null);
+export function onAuthStateChange(
+  callback: (event: string, userId: string | null) => void
+) {
+  return supabase.auth.onAuthStateChange((event, session) => {
+    callback(event, session?.user?.id ?? null);
   });
 }

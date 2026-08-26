@@ -36,6 +36,18 @@ CREATE TABLE IF NOT EXISTS referral_clicks (
   clicked_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- 用戶可編輯的常旅客計劃狀態 (航司里程餘額 / 酒店積分餘額 + FNC 使用狀態)
+CREATE TABLE IF NOT EXISTS user_program_states (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  program_type TEXT NOT NULL, -- 'airline' | 'hotel'
+  program_id TEXT NOT NULL,
+  balance NUMERIC DEFAULT 0,
+  fnc_used JSONB DEFAULT '{}',
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(user_id, program_type, program_id)
+);
+
 -- 遠端卡片規則 (管理員更新, 用戶公開讀取)
 CREATE TABLE IF NOT EXISTS card_rules (
   id TEXT PRIMARY KEY,
@@ -55,6 +67,7 @@ CREATE TABLE IF NOT EXISTS card_rules (
 -- Row Level Security (RLS) 策略
 ALTER TABLE user_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_card_states ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_program_states ENABLE ROW LEVEL SECURITY;
 ALTER TABLE referral_clicks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE card_rules ENABLE ROW LEVEL SECURITY;
 
@@ -67,6 +80,12 @@ CREATE POLICY "Users can manage their own settings"
 -- user_card_states: 用戶只能讀寫自己的資料
 CREATE POLICY "Users can manage their own card states"
   ON user_card_states FOR ALL
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+-- user_program_states: 用戶只能讀寫自己的資料
+CREATE POLICY "Users can manage their own program states"
+  ON user_program_states FOR ALL
   USING (auth.uid() = user_id)
   WITH CHECK (auth.uid() = user_id);
 
@@ -99,4 +118,8 @@ CREATE TRIGGER update_user_settings_updated_at
 
 CREATE TRIGGER update_user_card_states_updated_at
   BEFORE UPDATE ON user_card_states
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_user_program_states_updated_at
+  BEFORE UPDATE ON user_program_states
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
