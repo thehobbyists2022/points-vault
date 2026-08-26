@@ -289,8 +289,12 @@ export const Chase524Tab: React.FC<Chase524TabProps> = ({ profile, setProfile, o
                       {stage.stageNumber}
                     </span>
                     <div>
-                      <h4 className="text-base font-bold text-white">{stage.title}</h4>
-                      <span className="text-xs text-slate-400">{stage.subtitle}</span>
+                      <h4 className="text-base font-bold text-white">
+                        {language === 'en' && stage.titleEn ? stage.titleEn : stage.title}
+                      </h4>
+                      <span className="text-xs text-slate-400">
+                        {language === 'en' && stage.subtitleEn ? stage.subtitleEn : stage.subtitle}
+                      </span>
                     </div>
                   </div>
 
@@ -306,7 +310,7 @@ export const Chase524Tab: React.FC<Chase524TabProps> = ({ profile, setProfile, o
                     <span>{t(language, 'whyThisStage')}</span>
                   </span>
                   <p className="text-xs text-slate-400 leading-relaxed pl-4 border-l-2 border-indigo-500/30">
-                    {stage.whyThisOrder}
+                    {language === 'en' && stage.whyThisOrderEn ? stage.whyThisOrderEn : stage.whyThisOrder}
                   </p>
                 </div>
 
@@ -329,7 +333,10 @@ export const Chase524Tab: React.FC<Chase524TabProps> = ({ profile, setProfile, o
                 {/* Pro Tips */}
                 <div className="bg-slate-900/60 p-3 rounded-2xl border border-slate-800 text-xs text-amber-300 flex items-center space-x-2">
                   <Zap className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span><strong>{t(language, 'proTips')}:</strong> {stage.tips}</span>
+                  <span>
+                    <strong>{t(language, 'proTips')}:</strong>{' '}
+                    {language === 'en' && stage.tipsEn ? stage.tipsEn : stage.tips}
+                  </span>
                 </div>
               </div>
             ))}
@@ -384,9 +391,12 @@ export const Chase524Tab: React.FC<Chase524TabProps> = ({ profile, setProfile, o
                     </span>
                     <span className="text-xs font-bold text-white">{rule.ruleName}</span>
                   </div>
-                  <p className="text-xs text-slate-300 leading-relaxed">{rule.description}</p>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    {language === 'en' && rule.descriptionEn ? rule.descriptionEn : rule.description}
+                  </p>
                   <div className="p-2.5 bg-slate-950 rounded-xl text-[11px] text-amber-300 border border-slate-800">
-                    💡 <strong>{t(language, 'rulesTips')}:</strong> {rule.tips}
+                    💡 <strong>{t(language, 'rulesTips')}:</strong>{' '}
+                    {language === 'en' && rule.tipsEn ? rule.tipsEn : rule.tips}
                   </div>
                 </div>
               ))}

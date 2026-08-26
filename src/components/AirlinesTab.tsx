@@ -129,7 +129,9 @@ export const AirlinesTab: React.FC<AirlinesTabProps> = ({ airlines, profile, onU
                         {air.alliance}
                       </span>
                     </div>
-                    <h3 className="text-base font-extrabold text-white mt-1">{air.name}</h3>
+                    <h3 className="text-base font-extrabold text-white mt-1">
+                      {language === 'en' && air.nameEn ? air.nameEn : air.name}
+                    </h3>
                     <div className="mt-1.5 flex items-center space-x-1">
                       <select
                         value={air.statusTier}
@@ -265,7 +267,7 @@ export const AirlinesTab: React.FC<AirlinesTabProps> = ({ airlines, profile, onU
                     ) : (
                       <Clock className="w-4 h-4 text-sky-400 shrink-0" />
                     )}
-                    <span>{language === 'en' ? `Expiration Policy: ${air.expirationPolicy}` : `过期规则: ${air.expirationPolicy}`}</span>
+                    <span>{language === 'en' ? `Expiration Policy: ${air.expirationPolicyEn || air.expirationPolicy}` : `过期规则: ${air.expirationPolicy}`}</span>
                   </div>
 
                   {air.expirationDate && (
@@ -279,7 +281,7 @@ export const AirlinesTab: React.FC<AirlinesTabProps> = ({ airlines, profile, onU
                     <div className="flex items-center justify-between text-xs font-bold">
                       <span className="text-amber-300 flex items-center space-x-1">
                         <Ticket className="w-4 h-4 text-amber-400" />
-                        <span>{air.companionPass.title}</span>
+                        <span>{language === 'en' && air.companionPass.titleEn ? air.companionPass.titleEn : air.companionPass.title}</span>
                       </span>
                       <span className="text-slate-300">{language === 'en' ? `Expires: ${air.companionPass.expiryDate}` : `到期日: ${air.companionPass.expiryDate}`}</span>
                     </div>
@@ -322,7 +324,7 @@ export const AirlinesTab: React.FC<AirlinesTabProps> = ({ airlines, profile, onU
                     {language === 'en' ? 'Elite Member Status Benefits' : '会籍贵宾专属权益 (Status Benefits)'}
                   </div>
                   <ul className="space-y-1 text-xs text-slate-300">
-                    {air.perks.map((perk, idx) => (
+                    {(language === 'en' && air.perksEn ? air.perksEn : air.perks).map((perk, idx) => (
                       <li key={idx} className="flex items-center space-x-2">
                         <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 shrink-0" />
                         <span>{perk}</span>

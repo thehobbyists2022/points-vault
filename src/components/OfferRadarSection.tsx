@@ -152,7 +152,7 @@ export const OfferRadarSection: React.FC<OfferRadarSectionProps> = ({ className 
                   {language === 'en' ? 'Limited-Time Welcome Offer' : '限時最高開卡禮'}
                 </span>
                 <div className="text-lg font-black text-white tracking-tight">
-                  {offer.bonusText}
+                  {language === 'en' && offer.bonusTextEn ? offer.bonusTextEn : offer.bonusText}
                 </div>
                 <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-800/80">
                   <span className="text-slate-400">{t(language, 'estBonusVal')}:</span>
@@ -172,7 +172,7 @@ export const OfferRadarSection: React.FC<OfferRadarSectionProps> = ({ className 
 
               {/* Key Bullet Highlights */}
               <ul className="space-y-1.5 text-xs text-slate-300">
-                {offer.highlights.map((h, i) => (
+                {(language === 'en' && offer.highlightsEn ? offer.highlightsEn : offer.highlights).map((h, i) => (
                   <li key={i} className="flex items-start space-x-1.5">
                     <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
                     <span className="text-[11px] leading-tight">{h}</span>

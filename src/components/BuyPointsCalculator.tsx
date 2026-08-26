@@ -82,9 +82,11 @@ export const BuyPointsCalculator: React.FC<BuyPointsCalculatorProps> = ({ classN
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-white">{promo.program}</span>
+                    <span className="text-xs font-bold text-white">
+                      {language === 'en' && promo.programEn ? promo.programEn : promo.program}
+                    </span>
                     <span className="text-[10px] font-black text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">
-                      {promo.bonusOrDiscountText}
+                      {language === 'en' && promo.bonusOrDiscountTextEn ? promo.bonusOrDiscountTextEn : promo.bonusOrDiscountText}
                     </span>
                   </div>
                   <div className="text-[11px] text-slate-400 flex items-center justify-between">
@@ -146,7 +148,9 @@ export const BuyPointsCalculator: React.FC<BuyPointsCalculatorProps> = ({ classN
               <Sparkles className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
               <div>
                 <span className="font-bold text-slate-300 block">{language === 'en' ? 'Recommended Use Case' : '推薦使用時機'}:</span>
-                <span>{selectedPromo.recommendedUse}</span>
+                <span>
+                  {language === 'en' && selectedPromo.recommendedUseEn ? selectedPromo.recommendedUseEn : selectedPromo.recommendedUse}
+                </span>
               </div>
             </div>
           )}

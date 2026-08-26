@@ -61,6 +61,7 @@ export interface BankBonus {
 export interface AwardGoal {
   id: string;
   title: string;
+  titleEn?: string;
   airlineOrHotel: string;
   routeOrProperty: string;
   cabinClass: 'Economy' | 'Premium Economy' | 'Business' | 'First' | 'Hotel Standard' | 'Hotel Luxury';
@@ -70,19 +71,24 @@ export interface AwardGoal {
   transferPartners: string[]; // ['Amex MR', 'Chase UR', 'Citi', 'Bilt']
   programName: string; // e.g. 'Virgin Atlantic' or 'ANA Mileage Club'
   description: string;
+  descriptionEn?: string;
   tags: string[];
+  tagsEn?: string[];
 }
 
 export interface BuyPointsPromo {
   id: string;
   program: string;
+  programEn?: string;
   bonusOrDiscountText: string; // e.g. "150% Bonus (Max Promo)"
+  bonusOrDiscountTextEn?: string;
   standardPriceCpp: number; // e.g. 3.3c
   promotionalPriceCpp: number; // e.g. 1.32c
   expiryDate: string;
   minimumPurchase: number;
   directUrl: string;
   recommendedUse: string;
+  recommendedUseEn?: string;
 }
 
 export interface AllTimeHighOffer {
@@ -91,6 +97,7 @@ export interface AllTimeHighOffer {
   issuer: 'Chase' | 'Amex' | 'Citi' | 'Capital One' | 'Discover' | 'Bank of America';
   annualFee: number;
   bonusText: string; // e.g. "175,000 MR Points"
+  bonusTextEn?: string;
   bonusValueUSD: number; // e.g. $1,925
   spendRequired: number; // e.g. $8,000 in 6 months
   isATH: boolean;
@@ -98,20 +105,26 @@ export interface AllTimeHighOffer {
   chase524Sensitive: boolean;
   applyUrl: string;
   highlights: string[];
+  highlightsEn?: string[];
 }
 
 export interface RoadmapStage {
   stageNumber: number;
   title: string;
+  titleEn?: string;
   subtitle: string;
+  subtitleEn?: string;
   whyThisOrder: string;
+  whyThisOrderEn?: string;
   targetCards: string[];
   tips: string;
+  tipsEn?: string;
 }
 
 export interface AirlineProgram {
   id: string;
   name: string;
+  nameEn?: string;
   code: string;
   alliance: 'Star Alliance' | 'Oneworld' | 'SkyTeam' | 'Independent';
   brandColor: string;
@@ -119,25 +132,30 @@ export interface AirlineProgram {
   milesBalance: number;
   cppValue: number; // Authentic valuations (e.g. 1.35c, 1.55c)
   expirationPolicy: string;
+  expirationPolicyEn?: string;
   expirationDate?: string; // If applicable
   isExpirationWarning: boolean;
   memberNumber?: string;
   portalUrl?: string;
   companionPass?: {
     title: string;
+    titleEn?: string;
     currentProgress: number;
     targetProgress: number;
     unit: string;
+    unitEn?: string;
     expiryDate: string;
     isUnlocked: boolean;
   };
   perks: string[];
+  perksEn?: string[];
   player: 'P1' | 'P2';
 }
 
 export interface HotelProgram {
   id: string;
   name: string;
+  nameEn?: string;
   brandColor: string;
   statusTier: string;
   pointsBalance: number;
@@ -149,18 +167,21 @@ export interface HotelProgram {
   fncs: {
     id: string;
     title: string;
+    titleEn?: string;
     categoryLimit: string;
     expirationDate: string;
     isUsed: boolean;
     estimatedValueUSD?: number;
   }[];
   perks: string[];
+  perksEn?: string[];
   player: 'P1' | 'P2';
 }
 
 export interface CarRentalProgram {
   id: string;
   company: string;
+  companyEn?: string;
   statusTier: string;
   memberNumber?: string;
   portalUrl?: string;
@@ -245,6 +266,7 @@ export const MOCK_AIRLINE_PROGRAMS: AirlineProgram[] = [
   {
     id: 'air-1',
     name: 'United MileagePlus (美联航)',
+    nameEn: 'United MileagePlus',
     code: 'UA',
     alliance: 'Star Alliance',
     brandColor: 'from-blue-700 via-blue-900 to-slate-950',
@@ -252,6 +274,7 @@ export const MOCK_AIRLINE_PROGRAMS: AirlineProgram[] = [
     milesBalance: 145000,
     cppValue: 1.35,
     expirationPolicy: '永不过期 (Miles Never Expire)',
+    expirationPolicyEn: 'Miles Never Expire',
     isExpirationWarning: false,
     memberNumber: 'UA-88392019',
     portalUrl: 'https://www.united.com/',
@@ -261,11 +284,18 @@ export const MOCK_AIRLINE_PROGRAMS: AirlineProgram[] = [
       '免费预订 Star Alliance 伙伴机票零燃油附加费',
       '专属 1K 优先客服通道 & 免费升舱券 (PlusPoints)'
     ],
+    perksEn: [
+      '2 United Club One-Time Passes',
+      'Complimentary Economy Plus Seating at Booking',
+      'No Fuel Surcharges on Star Alliance Partner Awards',
+      'Dedicated 1K Desk & PlusPoints Upgrade Credits'
+    ],
     player: 'P1'
   },
   {
     id: 'air-2',
     name: 'Delta SkyMiles (达美航空)',
+    nameEn: 'Delta SkyMiles',
     code: 'DL',
     alliance: 'SkyTeam',
     brandColor: 'from-rose-700 via-rose-900 to-slate-950',
@@ -273,14 +303,17 @@ export const MOCK_AIRLINE_PROGRAMS: AirlineProgram[] = [
     milesBalance: 98000,
     cppValue: 1.15,
     expirationPolicy: '永不过期 (Miles Never Expire)',
+    expirationPolicyEn: 'Miles Never Expire',
     isExpirationWarning: false,
     memberNumber: 'DL-203948110',
     portalUrl: 'https://www.delta.com/',
     companionPass: {
       title: 'Delta Companion Certificate (Main Cabin 伴飞券)',
+      titleEn: 'Delta Companion Certificate (Main Cabin)',
       currentProgress: 1,
       targetProgress: 1,
       unit: '张可用',
+      unitEn: 'Available',
       expiryDate: '2026-11-15',
       isUnlocked: true
     },
@@ -290,11 +323,18 @@ export const MOCK_AIRLINE_PROGRAMS: AirlineProgram[] = [
       '免费托运 2 件 70 lbs 行李',
       'SkyTeam Elite Plus 国际贵宾室准入'
     ],
+    perksEn: [
+      'Zone 4 Priority Boarding',
+      'Complimentary First Class / Comfort+ Upgrades',
+      '2 Free Checked Bags (up to 70 lbs each)',
+      'SkyTeam Elite Plus International Lounge Access'
+    ],
     player: 'P1'
   },
   {
     id: 'air-3',
     name: 'American Airlines AAdvantage (美航)',
+    nameEn: 'American Airlines AAdvantage',
     code: 'AA',
     alliance: 'Oneworld',
     brandColor: 'from-slate-700 via-blue-900 to-red-950',
@@ -302,6 +342,7 @@ export const MOCK_AIRLINE_PROGRAMS: AirlineProgram[] = [
     milesBalance: 120000,
     cppValue: 1.45,
     expirationPolicy: '24 个月无变动过期 (持卡可自动保鲜)',
+    expirationPolicyEn: '24-Month Activity Expiry (Cardholders Extended)',
     expirationDate: '2026-11-20',
     isExpirationWarning: true,
     memberNumber: 'AA-K749201',
@@ -312,11 +353,18 @@ export const MOCK_AIRLINE_PROGRAMS: AirlineProgram[] = [
       'Systemwide Upgrades (SWU) 洲际平躺升舱券',
       '免费 2 件托运行李'
     ],
+    perksEn: [
+      'Oneworld Emerald Top-Tier Status',
+      'Unlimited Complimentary Main Cabin Extra Seating',
+      'Systemwide Upgrades (SWU) for Long-Haul Flights',
+      '2 Free Checked Bags'
+    ],
     player: 'P1'
   },
   {
     id: 'air-4',
     name: 'Southwest Rapid Rewards (美西南)',
+    nameEn: 'Southwest Rapid Rewards',
     code: 'WN',
     alliance: 'Independent',
     brandColor: 'from-blue-600 via-amber-600 to-rose-700',
@@ -324,14 +372,17 @@ export const MOCK_AIRLINE_PROGRAMS: AirlineProgram[] = [
     milesBalance: 85000,
     cppValue: 1.30,
     expirationPolicy: '永不过期 (Never Expire)',
+    expirationPolicyEn: 'Points Never Expire',
     isExpirationWarning: false,
     memberNumber: 'WN-592018392',
     portalUrl: 'https://www.southwest.com/rapidrewards/',
     companionPass: {
       title: 'Southwest Companion Pass (无限次买一送一伴飞神卡)',
+      titleEn: 'Southwest Companion Pass (Unlimited BOGO Pass)',
       currentProgress: 92000,
       targetProgress: 135000,
       unit: 'pts',
+      unitEn: 'pts',
       expiryDate: '2026-12-31',
       isUnlocked: false
     },
@@ -341,11 +392,18 @@ export const MOCK_AIRLINE_PROGRAMS: AirlineProgram[] = [
       '免费车载机上高速 Wi-Fi',
       '零退票/改签费'
     ],
+    perksEn: [
+      '2 Free Checked Bags on Every Flight',
+      'A1-A15 Priority Boarding Privilege',
+      'Complimentary Inflight High-Speed Wi-Fi',
+      'No Change or Cancellation Fees Ever'
+    ],
     player: 'P2'
   },
   {
     id: 'air-5',
     name: 'Alaska Airlines Mileage Plan (阿拉斯加)',
+    nameEn: 'Alaska Airlines Mileage Plan',
     code: 'AS',
     alliance: 'Oneworld',
     brandColor: 'from-emerald-800 via-teal-900 to-slate-950',
@@ -353,15 +411,18 @@ export const MOCK_AIRLINE_PROGRAMS: AirlineProgram[] = [
     milesBalance: 64000,
     cppValue: 1.55,
     expirationPolicy: '24 个月无变动过期',
+    expirationPolicyEn: '24-Month Inactivity Policy',
     expirationDate: '2026-12-30',
     isExpirationWarning: false,
     memberNumber: 'AS-10293848',
     portalUrl: 'https://www.alaskaair.com/',
     companionPass: {
       title: 'Famous $99 Companion Certificate (年度 $99 伴飞券)',
+      titleEn: 'Annual $99 Companion Fare Certificate',
       currentProgress: 1,
       targetProgress: 1,
       unit: '张可用',
+      unitEn: 'Available',
       expiryDate: '2026-10-31',
       isUnlocked: true
     },
@@ -574,6 +635,7 @@ export const MOCK_HOTEL_PROGRAMS: HotelProgram[] = [
   {
     id: 'hotel-1',
     name: 'World of Hyatt (凯悦)',
+    nameEn: 'World of Hyatt',
     brandColor: 'from-blue-600 to-sky-800',
     statusTier: 'Globalist',
     pointsBalance: 68500,
@@ -583,8 +645,8 @@ export const MOCK_HOTEL_PROGRAMS: HotelProgram[] = [
     memberNumber: 'HY-672910398',
     portalUrl: 'https://world.hyatt.com/',
     fncs: [
-      { id: 'fnc-1', title: 'Category 1-4 Free Night (Anniversary)', categoryLimit: 'Cat 1-4', expirationDate: '2026-11-30', isUsed: false },
-      { id: 'fnc-2', title: 'Category 1-7 Free Night (Milestone 60k)', categoryLimit: 'Cat 1-7', expirationDate: '2026-12-15', isUsed: false }
+      { id: 'fnc-1', title: 'Category 1-4 Free Night (Anniversary)', titleEn: 'Category 1-4 Free Night (Anniversary)', categoryLimit: 'Cat 1-4', expirationDate: '2026-11-30', isUsed: false },
+      { id: 'fnc-2', title: 'Category 1-7 Free Night (Milestone 60k)', titleEn: 'Category 1-7 Free Night (Milestone 60k)', categoryLimit: 'Cat 1-7', expirationDate: '2026-12-15', isUsed: false }
     ],
     perks: [
       'Free Club Lounge Access or Breakfast for 2',
@@ -592,11 +654,18 @@ export const MOCK_HOTEL_PROGRAMS: HotelProgram[] = [
       '4 PM Late Check-out Guaranteed',
       'Waived Resort Fees on Award & Paid Stays'
     ],
+    perksEn: [
+      'Free Club Lounge Access or Daily Full Breakfast for 2',
+      'Room Upgrade up to Standard Suite at Check-in',
+      'Guaranteed 4 PM Late Check-out',
+      'Waived Resort Fees on Award & Eligible Paid Stays'
+    ],
     player: 'P1'
   },
   {
     id: 'hotel-2',
     name: 'Marriott Bonvoy (万豪旅享家)',
+    nameEn: 'Marriott Bonvoy',
     brandColor: 'from-rose-800 to-amber-900',
     statusTier: 'Platinum Elite',
     pointsBalance: 210000,
@@ -606,8 +675,8 @@ export const MOCK_HOTEL_PROGRAMS: HotelProgram[] = [
     memberNumber: 'MB-99201839',
     portalUrl: 'https://www.marriott.com/loyalty.mi',
     fncs: [
-      { id: 'fnc-3', title: '85,000 Points Free Night (Amex Brilliant)', categoryLimit: 'Up to 85k pts', expirationDate: '2026-09-30', isUsed: false },
-      { id: 'fnc-4', title: '35,000 Points Free Night (Chase Boundless)', categoryLimit: 'Up to 35k pts', expirationDate: '2026-10-15', isUsed: true }
+      { id: 'fnc-3', title: '85,000 Points Free Night (Amex Brilliant)', titleEn: '85,000 Points Free Night (Amex Brilliant)', categoryLimit: 'Up to 85k pts', expirationDate: '2026-09-30', isUsed: false },
+      { id: 'fnc-4', title: '35,000 Points Free Night (Chase Boundless)', titleEn: '35,000 Points Free Night (Chase Boundless)', categoryLimit: 'Up to 35k pts', expirationDate: '2026-10-15', isUsed: true }
     ],
     perks: [
       'Lounge Access & Daily Free Breakfast',
@@ -615,11 +684,18 @@ export const MOCK_HOTEL_PROGRAMS: HotelProgram[] = [
       'Enhanced Room Upgrade (including suites)',
       '50% Bonus Points on Stays'
     ],
+    perksEn: [
+      'Executive Lounge Access & Daily Free Breakfast',
+      'Guaranteed 4 PM Late Check-out',
+      'Enhanced Room Upgrade (including select suites)',
+      '50% Bonus Points on Eligible Hotel Stays'
+    ],
     player: 'P1'
   },
   {
     id: 'hotel-3',
     name: 'Hilton Honors (希尔顿荣誉客会)',
+    nameEn: 'Hilton Honors',
     brandColor: 'from-indigo-800 to-purple-900',
     statusTier: 'Diamond Status',
     pointsBalance: 340000,
@@ -629,7 +705,7 @@ export const MOCK_HOTEL_PROGRAMS: HotelProgram[] = [
     memberNumber: 'HH-48201948',
     portalUrl: 'https://www.hilton.com/en/hilton-honors/',
     fncs: [
-      { id: 'fnc-5', title: 'Free Weekend Night Reward (Amex Aspire)', categoryLimit: 'Any Uncapped Standard Room', expirationDate: '2027-01-20', isUsed: false }
+      { id: 'fnc-5', title: 'Free Weekend Night Reward (Amex Aspire)', titleEn: 'Free Weekend Night Reward (Amex Aspire)', categoryLimit: 'Any Uncapped Standard Room', expirationDate: '2027-01-20', isUsed: false }
     ],
     perks: [
       'Daily Food & Beverage Credit or Continental Breakfast',
@@ -637,11 +713,18 @@ export const MOCK_HOTEL_PROGRAMS: HotelProgram[] = [
       'Space-Available Room Upgrades',
       '100% Bonus Points on Paid Stays'
     ],
+    perksEn: [
+      'Daily Food & Beverage Credit or Continental Breakfast',
+      'Guaranteed Executive Lounge Access',
+      'Space-Available Upgrades up to 1-Bedroom Suites',
+      '100% Bonus Points on All Eligible Paid Stays'
+    ],
     player: 'P2'
   },
   {
     id: 'hotel-4',
     name: 'IHG One Rewards (洲际 / Holiday Inn)',
+    nameEn: 'IHG One Rewards',
     brandColor: 'from-amber-700 via-orange-800 to-slate-950',
     statusTier: 'Platinum Elite',
     pointsBalance: 125000,
@@ -651,7 +734,7 @@ export const MOCK_HOTEL_PROGRAMS: HotelProgram[] = [
     memberNumber: 'IHG-77492019',
     portalUrl: 'https://www.ihg.com/',
     fncs: [
-      { id: 'fnc-6', title: 'Annual 40,000 Points Free Night (Chase IHG Premier)', categoryLimit: 'Up to 40k pts', expirationDate: '2026-12-31', isUsed: false }
+      { id: 'fnc-6', title: 'Annual 40,000 Points Free Night (Chase IHG Premier)', titleEn: 'Annual 40,000 Points Free Night (Chase IHG Premier)', categoryLimit: 'Up to 40k pts', expirationDate: '2026-12-31', isUsed: false }
     ],
     perks: [
       'Complimentary Room Upgrades (subject to availability)',
@@ -659,11 +742,18 @@ export const MOCK_HOTEL_PROGRAMS: HotelProgram[] = [
       'Early Check-in & Late 2 PM Check-out',
       '60% Bonus Points on Eligible Stays'
     ],
+    perksEn: [
+      'Complimentary Room Upgrades (subject to availability)',
+      'Guaranteed Room Availability with 72 hrs notice',
+      'Early Check-in & Extended 2 PM Late Check-out',
+      '60% Bonus Points on Eligible Hotel Stays'
+    ],
     player: 'P1'
   },
   {
     id: 'hotel-5',
     name: 'Wyndham Rewards (温德姆 / 华美达)',
+    nameEn: 'Wyndham Rewards',
     brandColor: 'from-blue-800 via-indigo-900 to-slate-950',
     statusTier: 'Diamond Status',
     pointsBalance: 45000,
@@ -679,6 +769,12 @@ export const MOCK_HOTEL_PROGRAMS: HotelProgram[] = [
       'Early Check-in & Late Check-out',
       '20% Bonus Points on Stays'
     ],
+    perksEn: [
+      'Suite Upgrades at Check-in (including Award Stays)',
+      'Welcome Amenity at Check-in (Snack/Drink or Points)',
+      'Preferred Early Check-in & Late Check-out',
+      '20% Bonus Points on All Stays'
+    ],
     player: 'P2'
   }
 ];
@@ -687,6 +783,7 @@ export const MOCK_CAR_RENTALS: CarRentalProgram[] = [
   {
     id: 'car-1',
     company: 'Hertz Gold Plus Rewards (赫兹租车)',
+    companyEn: 'Hertz Gold Plus Rewards',
     statusTier: 'President\'s Circle',
     memberNumber: 'HZ-8849201',
     portalUrl: 'https://www.hertz.com/',
@@ -710,6 +807,7 @@ export const MOCK_CAR_RENTALS: CarRentalProgram[] = [
   {
     id: 'car-2',
     company: 'National Emerald Club (国家租车 / 翡翠俱乐部)',
+    companyEn: 'National Emerald Club',
     statusTier: 'Executive Elite',
     memberNumber: 'EC-4492018',
     portalUrl: 'https://www.nationalcar.com/',
@@ -733,6 +831,7 @@ export const MOCK_CAR_RENTALS: CarRentalProgram[] = [
   {
     id: 'car-3',
     company: 'Avis Preferred (安飞士租车)',
+    companyEn: 'Avis Preferred',
     statusTier: 'President\'s Club',
     memberNumber: 'AV-9920184',
     portalUrl: 'https://www.avis.com/',
@@ -756,6 +855,7 @@ export const MOCK_CAR_RENTALS: CarRentalProgram[] = [
   {
     id: 'car-4',
     company: 'Enterprise Plus (企业租车)',
+    companyEn: 'Enterprise Plus',
     statusTier: 'Plus Silver',
     memberNumber: 'EP-1039284',
     portalUrl: 'https://www.enterprise.com/',
@@ -779,6 +879,7 @@ export const MOCK_CAR_RENTALS: CarRentalProgram[] = [
   {
     id: 'car-5',
     company: 'Budget Fastbreak (百捷租车)',
+    companyEn: 'Budget Fastbreak',
     statusTier: 'Fastbreak Member',
     memberNumber: 'BG-5520192',
     portalUrl: 'https://www.budget.com/',
@@ -827,25 +928,33 @@ export const CARD_APPLICATION_RULES = [
     bank: 'Chase',
     ruleName: '5/24 Rule',
     description: 'Chase will automatically deny applications for most cards if you have opened 5 or more personal credit cards with ANY bank in the last 24 months.',
-    tips: 'Apply for Chase cards FIRST in your travel hacking journey. Business cards generally do not count toward 5/24 if approved.'
+    descriptionEn: 'Chase automatically declines applications if you have opened 5 or more personal cards across any bank within the past 24 months.',
+    tips: 'Apply for Chase cards FIRST in your travel hacking journey. Business cards generally do not count toward 5/24 if approved.',
+    tipsEn: 'Prioritize Chase cards early. Most Chase business cards do not add to personal 5/24 count upon approval.'
   },
   {
     bank: 'American Express',
     ruleName: 'Once Per Lifetime Welcome Offer',
     description: 'Amex restricts welcome bonuses to once per card product per lifetime (defined usually as 7 years). Look out for Pop-up Warnings during application.',
-    tips: 'Watch out for Amex "Family Rules" (e.g. getting Gold bonus first may make you ineligible for Platinum bonus).'
+    descriptionEn: 'Amex limits welcome bonuses to once per card product per lifetime (~7 years). Watch for Pop-Up Jail eligibility alerts.',
+    tips: 'Watch out for Amex "Family Rules" (e.g. getting Gold bonus first may make you ineligible for Platinum bonus).',
+    tipsEn: 'Beware of Amex Family Rules (e.g. acquiring Gold first may restrict future Platinum welcome offers).'
   },
   {
     bank: 'Citi',
     ruleName: '8/65 Rule',
     description: 'Citi allows max 1 credit card application every 8 days, and max 2 applications within a rolling 65-day window.',
-    tips: 'Wait at least 9 days between Citi card applications.'
+    descriptionEn: 'Citi permits max 1 application per 8 days and max 2 applications within any rolling 65-day period.',
+    tips: 'Wait at least 9 days between Citi card applications.',
+    tipsEn: 'Space Citi card submissions at least 9 days apart to avoid instant rejection.'
   },
   {
     bank: 'Capital One',
     ruleName: '1 Card per 6 Months & Triple Pull',
     description: 'Capital One enforces a 1 card per 6 months application cap and pulls credit reports from all 3 bureaus (Experian, TransUnion, Equifax).',
-    tips: 'Freeze TransUnion or Equifax prior to application if allowed.'
+    descriptionEn: 'Capital One enforces a 1 card per 6 months velocity rule and pulls all 3 credit bureaus.',
+    tips: 'Freeze TransUnion or Equifax prior to application if allowed.',
+    tipsEn: 'Freezing TransUnion or Equifax before applying is widely reported to succeed for certain profiles.'
   }
 ];
 
@@ -917,6 +1026,7 @@ export const MOCK_AWARD_GOALS: AwardGoal[] = [
   {
     id: 'goal-1',
     title: '全日空 ANA 美日商务舱往返 (The Room)',
+    titleEn: 'ANA Business Class Roundtrip: US ⇄ Tokyo ("The Room")',
     airlineOrHotel: 'ANA (全日空)',
     routeOrProperty: 'US West (SFO/LAX) ⇄ Tokyo (HND/NRT)',
     cabinClass: 'Business',
@@ -926,11 +1036,14 @@ export const MOCK_AWARD_GOALS: AwardGoal[] = [
     transferPartners: ['Amex MR'],
     programName: 'ANA Mileage Club',
     description: '通过 Amex MR 1:1 转点至 ANA 里程俱乐部，仅需 88,000 里程即可兑换中美/美日顶级 The Room 商务舱往返。',
-    tags: ['史诗级甜点', '两舱奢华', 'Star Alliance']
+    descriptionEn: 'Transfer Amex MR 1:1 to ANA Mileage Club to book the acclaimed "The Room" business class suite roundtrip for just 88,000 miles.',
+    tags: ['史诗级甜点', '两舱奢华', 'Star Alliance'],
+    tagsEn: ['Epic Sweet Spot', 'Luxury Suites', 'Star Alliance']
   },
   {
     id: 'goal-2',
     title: '维珍航空 Virgin 兑换全日空头等舱 (The Suite)',
+    titleEn: 'Virgin Atlantic to ANA First Class ("The Suite")',
     airlineOrHotel: 'Virgin Atlantic (维珍航空)',
     routeOrProperty: 'US West Coast ⇄ Tokyo (单程)',
     cabinClass: 'First',
@@ -940,11 +1053,14 @@ export const MOCK_AWARD_GOALS: AwardGoal[] = [
     transferPartners: ['Amex MR', 'Chase UR', 'Citi', 'Capital One', 'Bilt'],
     programName: 'Virgin Atlantic Flying Club',
     description: '可搭配 Amex/Chase 转 Virgin Atlantic 限时 +30% Bonus，实际仅需约 42,000 银行点数即可兑换单程顶级头等舱！',
-    tags: ['转点加赠神器', 'SkyTeam', '头等舱']
+    descriptionEn: 'Combine with recurring +30% transfer bonuses to Virgin Atlantic to book world-class ANA First Class for ~42k bank points.',
+    tags: ['转点加赠神器', 'SkyTeam', '头等舱'],
+    tagsEn: ['Transfer Bonus Magic', 'First Class', 'SkyTeam']
   },
   {
     id: 'goal-3',
     title: '法荷航 Flying Blue Promo Rewards 美欧单程商务舱',
+    titleEn: 'Flying Blue Promo Rewards: US ⇄ Europe Business',
     airlineOrHotel: 'Air France / KLM',
     routeOrProperty: 'US East Coast (JFK/BOS) ⇄ Paris/Amsterdam',
     cabinClass: 'Business',
@@ -954,11 +1070,14 @@ export const MOCK_AWARD_GOALS: AwardGoal[] = [
     transferPartners: ['Amex MR', 'Chase UR', 'Capital One', 'Citi', 'Bilt'],
     programName: 'Flying Blue',
     description: '每月 1 号 Flying Blue Promo 轮换折扣，常有 50,000 里程直飞欧洲商务舱，五大银行点数均可即时转入。',
-    tags: ['五大行通转', '欧洲直飞', 'SkyTeam']
+    descriptionEn: 'Monthly rotating Promo Rewards offering transatlantic lie-flat business class from 50,000 miles, transferable from all major banks.',
+    tags: ['五大行通转', '欧洲直飞', 'SkyTeam'],
+    tagsEn: ['All Banks Transfer', 'Direct Europe', 'SkyTeam']
   },
   {
     id: 'goal-4',
     title: '凯悦东京柏悦 / 巴黎柏悦奢华免房',
+    titleEn: 'Park Hyatt Tokyo / Paris-Vendôme Luxury Free Night',
     airlineOrHotel: 'World of Hyatt (凯悦天地)',
     routeOrProperty: 'Park Hyatt Paris-Vendôme / Park Hyatt Tokyo',
     cabinClass: 'Hotel Luxury',
@@ -968,11 +1087,14 @@ export const MOCK_AWARD_GOALS: AwardGoal[] = [
     transferPartners: ['Chase UR', 'Bilt Rewards'],
     programName: 'World of Hyatt',
     description: 'Chase UR 1:1 转点至 Hyatt 是公认最保值的兑换方式，兑换 Cat 7-8 顶级柏悦酒店常年可达 3.0¢ 以上 CPP。',
-    tags: ['酒店天花板', 'Chase UR 首选']
+    descriptionEn: 'Transfer Chase UR 1:1 to Hyatt for peak Cat 7-8 Park Hyatt redemptions, regularly yielding >3.0¢ per point in value.',
+    tags: ['酒店天花板', 'Chase UR 首选'],
+    tagsEn: ['Hotel Pinnacle', 'Top Chase UR Pick']
   },
   {
     id: 'goal-5',
     title: '卡塔尔航空 Qsuite 空中套房商务舱',
+    titleEn: 'Qatar Airways Qsuite: Business Class Suite',
     airlineOrHotel: 'Qatar Airways (卡塔尔航空)',
     routeOrProperty: 'US ⇄ Doha ⇄ Asia / Maldives',
     cabinClass: 'Business',
@@ -982,7 +1104,9 @@ export const MOCK_AWARD_GOALS: AwardGoal[] = [
     transferPartners: ['Amex MR', 'Chase UR', 'Citi', 'Capital One', 'Bilt'],
     programName: 'Qatar Avios / British Airways Avios',
     description: '通过 Avios 体系互通，70,000 Avios 兑换世界最佳商务舱 Qsuite，带滑动隐私门与双人床。',
-    tags: ['世界第一商务舱', 'Avios 通用', 'Oneworld']
+    descriptionEn: 'Book the world-renowned Qsuite with sliding privacy doors for 70,000 Avios across BA, Qatar, and Finnair unified balances.',
+    tags: ['世界第一商务舱', 'Avios 通用', 'Oneworld'],
+    tagsEn: ['Best Business Suite', 'Universal Avios', 'Oneworld']
   }
 ];
 
@@ -990,46 +1114,58 @@ export const MOCK_BUY_POINTS_PROMOS: BuyPointsPromo[] = [
   {
     id: 'promo-1',
     program: 'World of Hyatt (凯悦)',
+    programEn: 'World of Hyatt',
     bonusOrDiscountText: '25% Off 优惠折算',
+    bonusOrDiscountTextEn: '25% Off Discount Promo',
     standardPriceCpp: 2.40,
     promotionalPriceCpp: 1.80,
     expiryDate: '2026-10-15',
     minimumPurchase: 5000,
     directUrl: 'https://storefront.points.com/world-of-hyatt/en-US/buy',
-    recommendedUse: '适合兑换 Cat 1-4 纯积分房或补足全包度假村积分差额'
+    recommendedUse: '适合兑换 Cat 1-4 纯积分房或补足全包度假村积分差额',
+    recommendedUseEn: 'Ideal for Cat 1-4 award nights and topping off all-inclusive resort stays'
   },
   {
     id: 'promo-2',
     program: 'Avianca LifeMiles (哥伦比亚航空)',
+    programEn: 'Avianca LifeMiles',
     bonusOrDiscountText: '150% Bonus 限时闪购',
+    bonusOrDiscountTextEn: '150% Bonus Flash Sale',
     standardPriceCpp: 3.30,
     promotionalPriceCpp: 1.32,
     expiryDate: '2026-09-30',
     minimumPurchase: 1000,
     directUrl: 'https://www.lifemiles.com/',
-    recommendedUse: '兑换星空联盟跨洋商务舱神器（美欧单程 63k，成本仅 ~$830）'
+    recommendedUse: '兑换星空联盟跨洋商务舱神器（美欧单程 63k，成本仅 ~$830）',
+    recommendedUseEn: 'Star Alliance transoceanic business awards (e.g. US-EU 63k costing ~$830)'
   },
   {
     id: 'promo-3',
     program: 'IHG One Rewards (洲际酒店)',
+    programEn: 'IHG One Rewards',
     bonusOrDiscountText: '100% Bonus 买一送一',
+    bonusOrDiscountTextEn: '100% Bonus (BOGO Flash)',
     standardPriceCpp: 1.00,
     promotionalPriceCpp: 0.50,
     expiryDate: '2026-10-05',
     minimumPurchase: 5000,
     directUrl: 'https://storefront.points.com/ihg-rewards-club/en-US/buy',
-    recommendedUse: '搭配 Chase IHG Premier 联名卡「住三送一」使用，折合每晚超低价'
+    recommendedUse: '搭配 Chase IHG Premier 联名卡「住三送一」使用，折合每晚超低价',
+    recommendedUseEn: 'Pair with Chase IHG Premier 4th Night Free benefit for maximum savings'
   },
   {
     id: 'promo-4',
     program: 'Alaska Airlines Mileage Plan (阿拉斯加航空)',
+    programEn: 'Alaska Airlines Mileage Plan',
     bonusOrDiscountText: '60% Bonus 加赠',
+    bonusOrDiscountTextEn: '60% Bonus Sale',
     standardPriceCpp: 2.95,
-    promotionalPriceCpp: 1.85,
+    promotionalPriceCpp: 1.84,
     expiryDate: '2026-09-20',
     minimumPurchase: 3000,
     directUrl: 'https://storefront.points.com/alaska-airlines/en-US/buy',
-    recommendedUse: '兑换日航 JAL 商务舱/星宇航空 Starlux 亚洲航线'
+    recommendedUse: '兑换日航 JAL 商务舱/星宇航空 Starlux 亚洲航线',
+    recommendedUseEn: 'Top-value redemptions for JAL Business Class and Starlux Airlines'
   }
 ];
 
@@ -1040,13 +1176,15 @@ export const MOCK_ATH_OFFERS: AllTimeHighOffer[] = [
     issuer: 'Amex',
     annualFee: 695,
     bonusText: '175,000 MR Points 史高奖励',
+    bonusTextEn: '175,000 MR Points All-Time High',
     bonusValueUSD: 1925,
     spendRequired: 8000,
     isATH: true,
     deadline: '2026-10-31',
     chase524Sensitive: false,
     applyUrl: 'https://www.americanexpress.com/us/credit-cards/card/platinum/',
-    highlights: ['史高 175k MR 估值超 $1,900', '每年 $1,500+ 报销大礼包', '百夫长/Delta/Priority Pass 机场贵宾厅']
+    highlights: ['史高 175k MR 估值超 $1,900', '每年 $1,500+ 报销大礼包', '百夫长/Delta/Priority Pass 机场贵宾厅'],
+    highlightsEn: ['ATH 175k MR valued over $1,900', '$1,500+ annual credits portfolio', 'Centurion, Delta, and Priority Pass lounge network']
   },
   {
     id: 'ath-2',
@@ -1054,13 +1192,15 @@ export const MOCK_ATH_OFFERS: AllTimeHighOffer[] = [
     issuer: 'Chase',
     annualFee: 95,
     bonusText: '100,000 UR 史高神卡回归',
+    bonusTextEn: '100,000 UR Legendary ATH Offer',
     bonusValueUSD: 1500,
     spendRequired: 4000,
     isATH: true,
     deadline: '2026-09-30',
     chase524Sensitive: true,
     applyUrl: 'https://creditcards.chase.com/rewards-credit-cards/sapphire/preferred',
-    highlights: ['5/24 核心必办 #1 推荐', 'UR 点数 1:1 转 Hyatt / United', '自带 Primary 租车主险']
+    highlights: ['5/24 核心必办 #1 推荐', 'UR 点数 1:1 转 Hyatt / United', '自带 Primary 租车主险'],
+    highlightsEn: ['#1 Priority card for 5/24 slots', '1:1 transfers to Hyatt and United', 'Built-in Primary Auto Rental CDW']
   },
   {
     id: 'ath-3',
@@ -1068,13 +1208,15 @@ export const MOCK_ATH_OFFERS: AllTimeHighOffer[] = [
     issuer: 'Citi',
     annualFee: 95,
     bonusText: '80,000 TYP 历史新高',
+    bonusTextEn: '80,000 TYP All-Time High Offer',
     bonusValueUSD: 1040,
     spendRequired: 4000,
     isATH: true,
     deadline: '2026-11-15',
     chase524Sensitive: false,
     applyUrl: 'https://www.citi.com/credit-cards/citi-strata-premier-credit-card',
-    highlights: ['超市、加油、餐饮、酒店、机票全面 3x 返点', 'TYP 可转长荣、维珍、土耳其航空', '每年 $100 酒店折抵']
+    highlights: ['超市、加油、餐饮、酒店、机票全面 3x 返点', 'TYP 可转长荣、维珍、土耳其航空', '每年 $100 酒店折抵'],
+    highlightsEn: ['3x points on Groceries, Gas, Dining, Travel & Airfare', 'TYP transfers to EVA Air, Virgin, and Turkish', '$100 annual hotel benefit']
   },
   {
     id: 'ath-4',
@@ -1082,13 +1224,15 @@ export const MOCK_ATH_OFFERS: AllTimeHighOffer[] = [
     issuer: 'Amex',
     annualFee: 650,
     bonusText: '185,000 Marriott Points 史高',
+    bonusTextEn: '185,000 Marriott Points ATH Bonus',
     bonusValueUSD: 1480,
     spendRequired: 6000,
     isATH: true,
     deadline: '2026-10-16',
     chase524Sensitive: false,
     applyUrl: 'https://www.americanexpress.com/us/credit-cards/card/marriott-bonvoy-brilliant/',
-    highlights: ['直接赠送万豪白金会籍 (免费早餐+行政酒廊)', '每年送 85,000 分免房券 (FNC)', '每年 $300 全球餐饮报销 ($25/月)']
+    highlights: ['直接赠送万豪白金会籍 (免费早餐+行政酒廊)', '每年送 85,000 分免房券 (FNC)', '每年 $300 全球餐饮报销 ($25/月)'],
+    highlightsEn: ['Complimentary Marriott Platinum Elite (Free breakfast & lounge access)', 'Annual 85,000 Points Free Night Award', 'Up to $300 annual dining statement credits ($25/mo)']
   },
   {
     id: 'ath-5',
@@ -1096,13 +1240,15 @@ export const MOCK_ATH_OFFERS: AllTimeHighOffer[] = [
     issuer: 'Chase',
     annualFee: 149,
     bonusText: '100,000 Miles + 助攻伴飞卡',
+    bonusTextEn: '100,000 Miles + Fast-Track Companion Pass',
     bonusValueUSD: 1300,
     spendRequired: 4000,
     isATH: true,
     deadline: '2026-10-01',
     chase524Sensitive: true,
     applyUrl: 'https://creditcards.chase.com/travel-credit-cards/southwest/priority',
-    highlights: ['直接斩获 100k 积分，伴飞卡进度达 74%', '每年 $75 西南航空报销 + 7,500 周年赠分', '4 次 A1-A15 登机免费升级']
+    highlights: ['直接斩获 100k 积分，伴飞卡进度达 74%', '每年 $75 西南航空报销 + 7,500 周年赠分', '4 次 A1-A15 登机免费升级'],
+    highlightsEn: ['100,000 points catapulting Companion Pass progress to 74%', '$75 Southwest travel credit + 7,500 anniversary bonus points', '4 Upgraded Boardings (A1-A15) per year']
   }
 ];
 
@@ -1110,33 +1256,49 @@ export const BEGINNER_ROADMAP_STAGES: RoadmapStage[] = [
   {
     stageNumber: 1,
     title: '信用基石建立期 (0~6 个月)',
+    titleEn: 'Stage 1: Foundation Building (Months 0-6)',
     subtitle: '建立美国信用历史，拿下免年费入门神卡',
+    subtitleEn: 'Establish initial US credit history with no-annual-fee starter cards',
     whyThisOrder: '没有信用记录时切勿盲目申请高端卡。先办无 SSN 友好或入门卡，按时全额还款 6 个月积累 FICO 分数。',
+    whyThisOrderEn: 'Avoid premature premium card applications. Start with accessible credit builders, maintaining 100% on-time payments to build your FICO base.',
     targetCards: ['Discover it® Cash Back', 'Chase Freedom Rise®', 'Chase Freedom Unlimited®'],
-    tips: '维持信用使用率低于 10%，绝不逾期。'
+    tips: '维持信用使用率低于 10%，绝不逾期。',
+    tipsEn: 'Keep total credit utilization under 10% and never miss a payment.'
   },
   {
     stageNumber: 2,
     title: 'Chase 5/24 黄金收割期 (6~18 个月)',
+    titleEn: 'Stage 2: Chase 5/24 Harvest (Months 6-18)',
     subtitle: '用满 5/24 槽位，锁定最高价值的 Chase 生态卡',
+    subtitleEn: 'Max out all 5 Chase slots with tier-1 ecosystem cards',
     whyThisOrder: '因为 Chase 严格执行 24 个月内超 5 张卡即拒签的铁律，必须把前 5 个名额全部留给 Chase 顶级卡。',
+    whyThisOrderEn: 'Because Chase strictly enforces the 5/24 rule, your earliest application slots must be reserved exclusively for high-yield Chase products.',
     targetCards: ['Chase Sapphire Preferred (CSP)', 'World of Hyatt Card', 'Southwest Priority', 'Chase Freedom Flex'],
-    tips: '先开 CSP 激活 UR 转点能力，再办酒店/航空联名卡。'
+    tips: '先开 CSP 激活 UR 转点能力，再办酒店/航空联名卡。',
+    tipsEn: 'Acquire CSP first to unlock UR point transferability, followed by co-branded hotel and airline cards.'
   },
   {
     stageNumber: 3,
     title: '全景进阶与跨行收割期 (18~24 个月)',
+    titleEn: 'Stage 3: Cross-Bank Expansion (Months 18-24)',
     subtitle: '突破 5/24 后，拿下 Amex、CapOne 与 Citi 顶级神卡',
+    subtitleEn: 'Expand into Amex, Capital One, and Citi premium portfolios',
     whyThisOrder: '出 5/24 后转向对开卡总数较宽松的 Amex 和 Citi，收割史高 175k 大白金与日常 4x 买菜金卡。',
+    whyThisOrderEn: 'After 5/24 slots are utilized, target banks with flexible velocity rules to secure ATH offers on Amex Platinum and Gold.',
     targetCards: ['Amex Gold Card (4x 餐饮买菜)', 'Capital One Venture X (负年费神卡)', 'Amex Platinum (175k 史高)', 'Citi Strata Premier'],
-    tips: '注意 Amex 一生一次开卡礼规则，非史高不上车。'
+    tips: '注意 Amex 一生一次开卡礼规则，非史高不上车。',
+    tipsEn: 'Heed Amex once-per-lifetime bonus restrictions—wait for ATH offers.'
   },
   {
     stageNumber: 4,
     title: '双人组队与商业卡无痛流 (长期进阶)',
+    titleEn: 'Stage 4: Player 2 & Business Card Mastery',
     subtitle: 'P1+P2 互相推荐，利用商业卡不计入 5/24 维持无限续航',
+    subtitleEn: 'Leverage P1/P2 mutual referrals and non-5/24 business cards',
     whyThisOrder: 'Chase 商业卡（Ink Cash / Ink Unlimited）审批不计入个人 5/24 槽位，可实现无限循环攒点与 Referral 返利。',
+    whyThisOrderEn: 'Chase business cards do not add to personal 5/24 counts while generating high-value sign-up bonuses and referral payouts.',
     targetCards: ['Chase Ink Business Cash', 'Chase Ink Business Unlimited', 'Amex Business Gold'],
-    tips: '夫妻之间 P1 推荐 P2 办卡，每次额外赚取 10k-30k 推荐分。'
+    tips: '夫妻之间 P1 推荐 P2 办卡，每次额外赚取 10k-30k 推荐分。',
+    tipsEn: 'Refer between Player 1 and Player 2 for compounding 10k-30k bonus points.'
   }
 ];

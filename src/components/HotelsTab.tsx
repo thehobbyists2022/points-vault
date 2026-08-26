@@ -118,7 +118,9 @@ export const HotelsTab: React.FC<HotelsTabProps> = ({ hotels, profile, onUpdateP
                     <span className="text-[10px] uppercase font-bold text-white/70 tracking-wider">
                       {language === 'en' ? `${hotel.player} Account` : `${hotel.player} 账户`}
                     </span>
-                    <h3 className="text-base font-extrabold text-white mt-0.5">{hotel.name}</h3>
+                    <h3 className="text-base font-extrabold text-white mt-0.5">
+                      {language === 'en' && hotel.nameEn ? hotel.nameEn : hotel.name}
+                    </h3>
                     <div className="mt-1.5 flex items-center space-x-1">
                       <select
                         value={hotel.statusTier}
@@ -317,7 +319,7 @@ export const HotelsTab: React.FC<HotelsTabProps> = ({ hotels, profile, onUpdateP
                     {language === 'en' ? 'Core Elite Benefits' : '会籍核心尊享权益 (Elite Perks)'}
                   </div>
                   <ul className="space-y-1 text-xs text-slate-300">
-                    {hotel.perks.map((perk, idx) => (
+                    {(language === 'en' && hotel.perksEn ? hotel.perksEn : hotel.perks).map((perk, idx) => (
                       <li key={idx} className="flex items-center space-x-2">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                         <span>{perk}</span>

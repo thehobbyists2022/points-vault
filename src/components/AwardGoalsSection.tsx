@@ -155,7 +155,7 @@ export const AwardGoalsSection: React.FC<AwardGoalsSectionProps> = ({ className 
                     <span className="px-2 py-0.5 text-[10px] font-extrabold rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
                       {goal.cabinClass}
                     </span>
-                    {goal.tags.map((tg, idx) => (
+                    {(language === 'en' && goal.tagsEn ? goal.tagsEn : goal.tags).map((tg, idx) => (
                       <span key={idx} className="px-2 py-0.5 text-[10px] font-semibold rounded-md bg-slate-800 text-slate-300 border border-slate-700">
                         {tg}
                       </span>
@@ -167,7 +167,9 @@ export const AwardGoalsSection: React.FC<AwardGoalsSectionProps> = ({ className 
                   </span>
                 </div>
 
-                <h4 className="text-base font-bold text-white leading-snug pt-1">{goal.title}</h4>
+                <h4 className="text-base font-bold text-white leading-snug pt-1">
+                  {language === 'en' && goal.titleEn ? goal.titleEn : goal.title}
+                </h4>
                 <div className="text-xs text-slate-400 flex items-center space-x-1.5">
                   {goal.cabinClass.includes('Hotel') ? (
                     <Building2 className="w-3.5 h-3.5 text-indigo-400" />
@@ -242,7 +244,7 @@ export const AwardGoalsSection: React.FC<AwardGoalsSectionProps> = ({ className 
                   <span>{t(language, 'bestTransferRoute')}:</span>
                 </div>
                 <p className="text-[11px] leading-relaxed text-slate-300">
-                  {goal.description}
+                  {language === 'en' && goal.descriptionEn ? goal.descriptionEn : goal.description}
                 </p>
                 <div className="flex flex-wrap gap-1.5 pt-1">
                   {goal.transferPartners.map((partner, i) => (

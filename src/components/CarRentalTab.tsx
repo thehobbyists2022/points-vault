@@ -105,7 +105,9 @@ export const CarRentalTab: React.FC<CarRentalTabProps> = ({ cars, profile }) => 
               </div>
 
               <div>
-                <h3 className="text-base font-extrabold text-white">{car.company}</h3>
+                <h3 className="text-base font-extrabold text-white">
+                  {language === 'en' && car.companyEn ? car.companyEn : car.company}
+                </h3>
                 
                 {/* Member ID display */}
                 <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-800/80 text-xs">
@@ -236,7 +238,7 @@ export const CarRentalTab: React.FC<CarRentalTabProps> = ({ cars, profile }) => 
               <div className="flex items-center space-x-2">
                 <Award className="w-5 h-5 text-amber-400" />
                 <h3 className="text-base font-bold text-white">
-                  {selectedCar.company} {language === 'en' ? 'Status Match Route' : 'Status Match 会籍匹配路线'}
+                  {language === 'en' && selectedCar.companyEn ? selectedCar.companyEn : selectedCar.company} {language === 'en' ? 'Status Match Route' : 'Status Match 会籍匹配路线'}
                 </h3>
               </div>
               <span className="text-xs text-amber-300 font-semibold">{language === 'en' ? 'Reciprocal Free Upgrade' : '互认免费升级'}</span>
