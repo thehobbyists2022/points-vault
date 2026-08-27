@@ -1,0 +1,42 @@
+name: Supabase Keep-Alive Trigger
+
+on:
+  schedule:
+    # Runs every 2 days at 04:00 UTC (well within Supabase's 7-day inactivity threshold)
+    - cron: '0 4 */2 * *'
+  workflow_dispatch: # Allows manual trigger anytime from GitHub Actions tab
+
+jobs:
+  ping-supabase:
+    name: Ping PostgreSQL Database
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST API (Authenticated DB Query)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "::warning ::SUPABASE_URL or SUPABASE_ANON_KEY secret is not set in GitHub Repository Secrets."
+            echo "Please add SUPABASE_URL and SUPABASE_ANON_KEY to Repo Settings > Secrets and variables > Actions."
+            exit 0
+          fi
+
+          echo "Pinging Supabase PostgreSQL database at: $SUPABASE_URL"
+          
+          # Query user_settings or root rest schema with full auth headers to activate Postgres engine
+          HTTP_STATUS=$(curl -s -o response.json -w "%{http_code}" \
+            -X GET "${SUPABASE_URL}/rest/v1/user_settings?select=id&limit=1" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}")
+
+          echo "HTTP Response Status: $HTTP_STATUS"
+          cat response.json || true
+          echo ""
+
+          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 500 ]; then
+            echo "✅ Supabase PostgreSQL successfully queried and kept active at $(date -u)"
+          else
+            echo "❌ Unexpected response status: $HTTP_STATUS"
+            exit 1
+          fi
