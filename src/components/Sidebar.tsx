@@ -8,9 +8,9 @@ import {
   ShoppingBag,
   ArrowRightLeft,
   ShieldAlert,
-  Sparkles,
   Gift,
   Landmark,
+  Crown,
 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { t, type translations } from '../i18n/translations';
@@ -32,6 +32,7 @@ interface SidebarProps {
   setActiveTab: (tab: TabType) => void;
   unclaimedPerksCount: number;
   fncCount: number;
+  onOpenProModal?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -39,8 +40,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   setActiveTab,
   unclaimedPerksCount,
   fncCount,
+  onOpenProModal,
 }) => {
   const language = useAppStore((s) => s.language);
+  const isPro = useAppStore((s) => s.isPro);
+  const proPlan = useAppStore((s) => s.proPlan);
   const bankBonuses = useAppStore((s) => s.bankBonuses || []);
   const activeBankCount = bankBonuses.filter((b) => b.status === 'in_progress').length;
 
@@ -152,17 +156,39 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Pro Upgrade / App Info Footer Box */}
-      <div className="mt-6 p-3.5 bg-gradient-to-b from-indigo-950/40 to-slate-900/80 border border-indigo-500/20 rounded-2xl">
-        <div className="flex items-center space-x-2 text-xs font-bold text-amber-400 mb-1">
-          <Sparkles className="w-4 h-4" />
-          <span>PointsVault PRO</span>
+      <div className="mt-6 p-3.5 bg-gradient-to-b from-indigo-950/40 to-slate-900/80 border border-amber-500/20 rounded-2xl">
+        <div className="flex items-center justify-between mb-1.5">
+          <div className="flex items-center space-x-1.5 text-xs font-bold text-amber-400">
+            <Crown className="w-4 h-4 fill-amber-400" />
+            <span>PointsVault PRO</span>
+          </div>
+          {isPro && (
+            <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 border border-amber-400/40 uppercase">
+              {proPlan}
+            </span>
+          )}
         </div>
         <p className="text-[11px] text-slate-400 leading-relaxed mb-2.5">
-          {language === 'en' 
-            ? 'Complete terminal for US credit cards, valuation, FNC certificates, and status match.'
-            : '包含信用卡、真實飛行里程估值、酒店 FNC 免房券與租車會籍路線引擎。'}
+          {isPro
+            ? (language === 'en' ? 'Unlimited cards, P1/P2 sync, VIP alerts & statement parser active.' : '已解鎖無限卡包、雙人模式、VIP預警與帳單解析。')
+            : (language === 'en' ? 'Unlock unlimited cards, P1/P2 sync, CSV statement parser & VIP radar.' : '升級解鎖無限卡包、P1/P2 雙打、CSV 帳單解析與 VIP 預警。')}
         </p>
-        <div className="text-[10px] text-slate-500 flex items-center justify-between border-t border-slate-800/80 pt-2">
+
+        {onOpenProModal && (
+          <button
+            onClick={onOpenProModal}
+            className={`w-full py-2 px-3 rounded-xl text-xs font-bold transition-all shadow-md flex items-center justify-center space-x-1.5 cursor-pointer ${
+              isPro
+                ? 'bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700'
+                : 'bg-gradient-to-r from-amber-500 to-yellow-400 hover:brightness-110 text-slate-950 shadow-amber-500/15'
+            }`}
+          >
+            <Crown className={`w-3.5 h-3.5 ${isPro ? 'text-amber-400' : 'text-slate-950 fill-slate-950'}`} />
+            <span>{isPro ? t(language, 'proManagePlan') : t(language, 'proUpgradeBtn')}</span>
+          </button>
+        )}
+
+        <div className="text-[10px] text-slate-500 flex items-center justify-between border-t border-slate-800/80 pt-2 mt-2.5">
           <span>v3.0.0</span>
           <span className="text-emerald-400">{language === 'en' ? 'System Ready' : '系統就緒'}</span>
         </div>

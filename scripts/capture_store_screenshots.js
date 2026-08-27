@@ -40,7 +40,7 @@ async function capture() {
         parsed.state.profile.language = 'en';
         localStorage.setItem('points-vault-storage', JSON.stringify(parsed));
       }
-    } catch (e) {}
+    } catch {}
   });
 
   await page.reload({ waitUntil: 'networkidle0' });

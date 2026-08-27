@@ -14,6 +14,7 @@ import { NotificationCenter } from './components/NotificationCenter';
 import { AuthModal } from './components/AuthModal';
 import { DemoBanner } from './components/DemoBanner';
 import { OnboardingWizardModal } from './components/OnboardingWizardModal';
+import { ProUpgradeModal } from './components/ProUpgradeModal';
 import { useState, useEffect } from 'react';
 import { onAuthStateChange, isSupabaseConfigured, supabase, signOut } from './lib/supabase';
 import { pushToCloud, pullFromCloud } from './lib/sync';
@@ -26,6 +27,7 @@ export function App() {
   const [notifCenterOpen, setNotifCenterOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [wizardOpen, setWizardOpen] = useState(false);
+  const [proModalOpen, setProModalOpen] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
 
   // Watch Supabase auth state changes
@@ -144,6 +146,7 @@ export function App() {
         unreadCount={unreadCount}
         onOpenNotifCenter={() => setNotifCenterOpen(true)}
         onOpenAuthModal={() => setAuthModalOpen(true)}
+        onOpenProModal={() => setProModalOpen(true)}
         isSignedIn={Boolean(userId)}
         userEmail={userEmail}
         onSignOut={handleSignOut}
@@ -160,6 +163,7 @@ export function App() {
           setActiveTab={setActiveTab}
           unclaimedPerksCount={unclaimedPerksCount}
           fncCount={fncCount}
+          onOpenProModal={() => setProModalOpen(true)}
         />
 
         {/* Tab Content Display Area */}
@@ -252,6 +256,12 @@ export function App() {
       <OnboardingWizardModal
         isOpen={wizardOpen}
         onClose={() => setWizardOpen(false)}
+      />
+
+      {/* Pro Upgrade Subscription & Lifetime Buyout Modal */}
+      <ProUpgradeModal
+        isOpen={proModalOpen}
+        onClose={() => setProModalOpen(false)}
       />
     </div>
   );

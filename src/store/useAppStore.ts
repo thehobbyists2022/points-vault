@@ -35,12 +35,17 @@ interface AppState {
   notifications: AppNotification[];
   userEmail: string | null;
   isDemoMode: boolean;
+  isPro: boolean;
+  proPlan: 'free' | 'monthly' | 'annual' | 'lifetime';
+  proExpiresAt: string | null;
 
   setLanguage: (lang: Language) => void;
   setActiveTab: (tab: TabType) => void;
   setProfile: (updater: UserProfile | ((prev: UserProfile) => UserProfile)) => void;
   setUserEmail: (email: string | null) => void;
   setIsDemoMode: (isDemo: boolean) => void;
+  upgradeToPro: (plan: 'monthly' | 'annual' | 'lifetime', promoCode?: string) => boolean;
+  cancelPro: () => void;
   updateCppRate: (currencyKey: string, cppValue: number) => void;
   resetCppRates: () => void;
 
@@ -110,11 +115,46 @@ export const useAppStore = create<AppState>()(
         MOCK_TRANSFER_PARTNERS
       ),
       userEmail: null,
+      isPro: false,
+      proPlan: 'free',
+      proExpiresAt: null,
 
       setLanguage: (lang) => set({ language: lang }),
       setActiveTab: (tab) => set({ activeTab: tab }),
       setUserEmail: (email) => set({ userEmail: email }),
       setIsDemoMode: (isDemo) => set({ isDemoMode: isDemo }),
+
+      upgradeToPro: (plan, promoCode) => {
+        const validCodes = ['EARLYBIRD', 'VIP2026', 'PROPOINTS', 'DEEPSEEK', 'GOOGLEPLAY'];
+        const isCodeValid = promoCode ? validCodes.includes(promoCode.trim().toUpperCase()) : false;
+        
+        let expiresAt: string | null = null;
+        if (plan === 'monthly') {
+          const d = new Date();
+          d.setMonth(d.getMonth() + 1);
+          expiresAt = d.toISOString();
+        } else if (plan === 'annual') {
+          const d = new Date();
+          d.setFullYear(d.getFullYear() + 1);
+          expiresAt = d.toISOString();
+        } else {
+          expiresAt = null; // lifetime
+        }
+
+        set({
+          isPro: true,
+          proPlan: isCodeValid ? 'lifetime' : plan,
+          proExpiresAt: isCodeValid ? null : expiresAt,
+        });
+        return true;
+      },
+
+      cancelPro: () =>
+        set({
+          isPro: false,
+          proPlan: 'free',
+          proExpiresAt: null,
+        }),
 
       updateCppRate: (currencyKey, cppValue) =>
         set((state) => ({
@@ -406,6 +446,9 @@ export const useAppStore = create<AppState>()(
         customCppRates: state.customCppRates,
         profile: state.profile,
         activeTab: state.activeTab,
+        isPro: state.isPro,
+        proPlan: state.proPlan,
+        proExpiresAt: state.proExpiresAt,
       }),
       migrate: (persistedState, version) => {
         const state = persistedState as Partial<AppState> | undefined;
@@ -504,6 +547,9 @@ export const useAppStore = create<AppState>()(
           bankBonuses: dedupeById(state?.bankBonuses ?? MOCK_BANK_BONUSES),
           customCppRates: state?.customCppRates ?? DEFAULT_CPP_RATES,
           activeTab: (state?.activeTab ?? 'dashboard') as TabType,
+          isPro: Boolean(state?.isPro),
+          proPlan: state?.proPlan ?? 'free',
+          proExpiresAt: state?.proExpiresAt ?? null,
         };
         if (version < 2 && profile) {
           // Upgrade legacy counter-based model (chase524CountP1/P2) to date-window model.

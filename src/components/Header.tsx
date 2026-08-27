@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, UserCheck, Wallet, Sparkles, Layers, Bell, Globe, Cloud, CloudOff, HardDrive } from 'lucide-react';
+import { ShieldCheck, UserCheck, Wallet, Sparkles, Layers, Bell, Globe, Cloud, CloudOff, HardDrive, Crown } from 'lucide-react';
 import type { UserProfile } from '../data/mockData';
 import { BackupRestoreModal } from './BackupRestoreModal';
 import { useAppStore } from '../store/useAppStore';
@@ -13,6 +13,7 @@ interface HeaderProps {
   unreadCount: number;
   onOpenNotifCenter: () => void;
   onOpenAuthModal: () => void;
+  onOpenProModal: () => void;
   isSignedIn: boolean;
   userEmail?: string | null;
   onSignOut?: () => void;
@@ -26,12 +27,15 @@ export const Header: React.FC<HeaderProps> = ({
   unreadCount,
   onOpenNotifCenter,
   onOpenAuthModal,
+  onOpenProModal,
   isSignedIn,
   userEmail,
   onSignOut,
 }) => {
   const language = useAppStore((s) => s.language);
   const setLanguage = useAppStore((s) => s.setLanguage);
+  const isPro = useAppStore((s) => s.isPro);
+  const proPlan = useAppStore((s) => s.proPlan);
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
 
   return (
@@ -98,6 +102,20 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </div>
         </div>
+
+        {/* Pro Upgrade / Pro Status Badge */}
+        <button
+          onClick={onOpenProModal}
+          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md cursor-pointer ${
+            isPro
+              ? 'bg-gradient-to-r from-amber-500/20 to-yellow-500/20 text-amber-300 border border-amber-400/50 hover:brightness-110 shadow-amber-500/10'
+              : 'bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 hover:brightness-110 shadow-amber-500/20 active:scale-95'
+          }`}
+          title={isPro ? `PointsVault Pro (${proPlan.toUpperCase()})` : t(language, 'proUpgradeTitle')}
+        >
+          <Crown className={`w-3.5 h-3.5 ${isPro ? 'text-amber-400 fill-amber-400' : 'text-slate-950 fill-slate-950'}`} />
+          <span>{isPro ? t(language, 'proCurrentMember') : t(language, 'proUpgradeBtn')}</span>
+        </button>
 
         {/* Backup & Restore Button */}
         <button
