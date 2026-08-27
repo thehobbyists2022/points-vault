@@ -289,8 +289,16 @@ export const AirlinesTab: React.FC<AirlinesTabProps> = ({ airlines, profile, onU
                     {!air.companionPass.isUnlocked && (
                       <div className="space-y-1">
                         <div className="flex justify-between text-[11px] text-slate-300">
-                          <span>{language === 'en' ? `Accumulated ${air.companionPass.currentProgress.toLocaleString()} pts` : `已积累 ${air.companionPass.currentProgress.toLocaleString()} pts`}</span>
-                          <span>{language === 'en' ? `Target ${air.companionPass.targetProgress.toLocaleString()} pts` : `目标 ${air.companionPass.targetProgress.toLocaleString()} pts`}</span>
+                          <span>
+                            {language === 'en'
+                              ? `Accumulated ${air.companionPass.currentProgress.toLocaleString()} ${air.companionPass.unitEn || air.companionPass.unit}`
+                              : `已积累 ${air.companionPass.currentProgress.toLocaleString()} ${air.companionPass.unit}`}
+                          </span>
+                          <span>
+                            {language === 'en'
+                              ? `Target ${air.companionPass.targetProgress.toLocaleString()} ${air.companionPass.unitEn || air.companionPass.unit}`
+                              : `目标 ${air.companionPass.targetProgress.toLocaleString()} ${air.companionPass.unit}`}
+                          </span>
                         </div>
                         <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
                           <div

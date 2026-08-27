@@ -119,8 +119,13 @@ export const translations = {
     dashCategoryLimit: "Category limit",
     dashEstValue: "Est. value ~",
 
-    // Portfolio History Chart
+    // Portfolio History & Breakdown Chart
     portfolioHistory: 'Portfolio Value History (90 Days)',
+    portfolioBreakdown: 'Asset Allocation Breakdown',
+    assetCards: 'Credit Card Points',
+    assetAirlines: 'Airline Miles',
+    assetHotels: 'Hotel Points',
+    assetPerks: 'Unclaimed Card Perks',
 
     // Cards Tab Extended
     cardCurrentPoints: "Current Points",
@@ -441,8 +446,13 @@ export const translations = {
     dashCategoryLimit: "级别上限",
     dashEstValue: "预估价值 ~",
 
-    // Portfolio History Chart
+    // Portfolio History & Breakdown Chart
     portfolioHistory: '資產估值歷史走勢 (90 天)',
+    portfolioBreakdown: '資產分類佔比 (Asset Allocation)',
+    assetCards: '信用卡點數 (Cards)',
+    assetAirlines: '航空哩程 (Airlines)',
+    assetHotels: '酒店積分 (Hotels)',
+    assetPerks: '未領取福利 (Perks)',
 
     // Cards Tab Extended
     cardCurrentPoints: "当前点数储备",

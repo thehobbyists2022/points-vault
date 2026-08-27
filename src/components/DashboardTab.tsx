@@ -11,8 +11,20 @@ import {
   Smartphone,
   Calendar,
   Settings2,
+  PieChart as PieChartIcon,
 } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from 'recharts';
 import type { CreditCard, HotelProgram, CarRentalProgram, AirlineProgram, UserProfile } from '../data/mockData';
 import { countChase524Openings } from '../data/mockData';
 import { useAppStore } from '../store/useAppStore';
@@ -96,6 +108,14 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
   const companionPasses = filteredAirlines
     .filter((a) => a.companionPass)
     .map((a) => ({ ...a.companionPass!, airlineName: a.name }));
+
+  // Asset allocation dataset for PieChart
+  const allocationData = [
+    { name: t(language, 'assetCards'), value: Math.round(cardPointsValue), color: '#f59e0b' },
+    { name: t(language, 'assetAirlines'), value: Math.round(airlinePointsValue), color: '#38bdf8' },
+    { name: t(language, 'assetHotels'), value: Math.round(hotelPointsValue), color: '#a78bfa' },
+    ...(unclaimedValue > 0 ? [{ name: t(language, 'assetPerks'), value: Math.round(unclaimedValue), color: '#10b981' }] : []),
+  ].filter((d) => d.value > 0);
 
   const handleExportCalendar = () => {
     const ics = generatePerksCalendarICS(cards, hotels, profile.p1Name, language);
@@ -385,40 +405,112 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
         </div>
       )}
 
-      {/* Portfolio Value History Chart */}
-      {loadHistory().length >= 2 && (
-        <div className="glass-panel rounded-3xl p-6 border border-slate-800 space-y-4">
-          <div className="flex items-center space-x-2">
-            <TrendingUp className="w-5 h-5 text-indigo-400" />
-            <h3 className="text-base font-bold text-white">
-              {t(language, 'portfolioHistory')}
-            </h3>
+      {/* Portfolio Analytics: Asset Allocation Breakdown & 90-Day History Trend */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Asset Allocation Donut / Pie Chart */}
+        <div className="glass-panel rounded-3xl p-6 border border-slate-800 space-y-4 flex flex-col justify-between">
+          <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div className="flex items-center space-x-2">
+              <PieChartIcon className="w-5 h-5 text-amber-400" />
+              <h3 className="text-base font-bold text-white">
+                {t(language, 'portfolioBreakdown')}
+              </h3>
+            </div>
+            <span className="text-xs font-bold text-emerald-400">
+              ${totalValue.toLocaleString('en-US', { maximumFractionDigits: 0 })} USD
+            </span>
           </div>
-          <ResponsiveContainer width="100%" height={220}>
-            <LineChart data={loadHistory()} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-              <XAxis
-                dataKey="date"
-                tick={{ fill: '#64748b', fontSize: 10 }}
-                tickFormatter={(v) => v.slice(5)}
-              />
-              <YAxis
-                tick={{ fill: '#64748b', fontSize: 10 }}
-                tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
-              />
-              <Tooltip
-                contentStyle={{ background: '#0b101d', border: '1px solid #1e293b', borderRadius: '12px' }}
-                labelStyle={{ color: '#94a3b8', fontSize: '11px' }}
-                formatter={(value) => [`$${Number(value).toFixed(2)}`, '']}
-              />
-              <Line type="monotone" dataKey="totalValueUSD" stroke="#6366f1" strokeWidth={2} dot={false} name="Total" />
-              <Line type="monotone" dataKey="cardValueUSD" stroke="#f59e0b" strokeWidth={1.5} dot={false} name="Cards" />
-              <Line type="monotone" dataKey="airlineValueUSD" stroke="#38bdf8" strokeWidth={1.5} dot={false} name="Airlines" />
-              <Line type="monotone" dataKey="hotelValueUSD" stroke="#a78bfa" strokeWidth={1.5} dot={false} name="Hotels" />
-            </LineChart>
-          </ResponsiveContainer>
+
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-1">
+            <div className="w-full sm:w-1/2 h-[180px] relative flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={allocationData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={48}
+                    outerRadius={75}
+                    paddingAngle={3}
+                    dataKey="value"
+                  >
+                    {allocationData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} stroke="#0f172a" strokeWidth={2} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{ background: '#0b101d', border: '1px solid #1e293b', borderRadius: '12px', fontSize: '11px' }}
+                    itemStyle={{ color: '#fff' }}
+                    formatter={(value) => [`$${Number(value).toLocaleString('en-US')} (${totalValue > 0 ? Math.round((Number(value) / totalValue) * 100) : 0}%)`, '']}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Total</span>
+                <span className="text-sm font-black text-white">${(totalValue / 1000).toFixed(1)}k</span>
+              </div>
+            </div>
+
+            {/* Custom Interactive Breakdown Legend */}
+            <div className="w-full sm:w-1/2 space-y-2 text-xs">
+              {allocationData.map((item, idx) => {
+                const pct = totalValue > 0 ? Math.round((item.value / totalValue) * 100) : 0;
+                return (
+                  <div key={idx} className="flex items-center justify-between p-2 rounded-xl bg-slate-900/60 border border-slate-800">
+                    <div className="flex items-center space-x-2 min-w-0">
+                      <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
+                      <span className="text-slate-300 font-medium truncate">{item.name}</span>
+                    </div>
+                    <div className="text-right flex items-center space-x-2 shrink-0">
+                      <span className="font-bold text-white">${item.value.toLocaleString('en-US')}</span>
+                      <span className="text-[10px] text-slate-400 w-8 text-right font-mono">({pct}%)</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
-      )}
+
+        {/* Portfolio Value History Line Chart */}
+        <div className="glass-panel rounded-3xl p-6 border border-slate-800 space-y-4 flex flex-col justify-between">
+          <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div className="flex items-center space-x-2">
+              <TrendingUp className="w-5 h-5 text-indigo-400" />
+              <h3 className="text-base font-bold text-white">
+                {t(language, 'portfolioHistory')}
+              </h3>
+            </div>
+            <span className="text-[11px] text-slate-400">90 Days</span>
+          </div>
+
+          <div className="h-[180px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={loadHistory()} margin={{ top: 5, right: 10, left: -15, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fill: '#64748b', fontSize: 10 }}
+                  tickFormatter={(v) => v.slice(5)}
+                />
+                <YAxis
+                  tick={{ fill: '#64748b', fontSize: 10 }}
+                  tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
+                />
+                <Tooltip
+                  contentStyle={{ background: '#0b101d', border: '1px solid #1e293b', borderRadius: '12px' }}
+                  labelStyle={{ color: '#94a3b8', fontSize: '11px' }}
+                  formatter={(value) => [`$${Number(value).toFixed(0)}`, '']}
+                />
+                <Line type="monotone" dataKey="totalValueUSD" stroke="#6366f1" strokeWidth={2} dot={false} name="Total" />
+                <Line type="monotone" dataKey="cardValueUSD" stroke="#f59e0b" strokeWidth={1.5} dot={false} name="Cards" />
+                <Line type="monotone" dataKey="airlineValueUSD" stroke="#38bdf8" strokeWidth={1.5} dot={false} name="Airlines" />
+                <Line type="monotone" dataKey="hotelValueUSD" stroke="#a78bfa" strokeWidth={1.5} dot={false} name="Hotels" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
 
       {/* Modals */}
       <P2CheatSheetModal

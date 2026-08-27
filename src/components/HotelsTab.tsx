@@ -282,7 +282,9 @@ export const HotelsTab: React.FC<HotelsTabProps> = ({ hotels, profile, onUpdateP
                         }`}
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-bold text-white">{fnc.title}</span>
+                          <span className="font-bold text-white">
+                            {language === 'en' && fnc.titleEn ? fnc.titleEn : fnc.title}
+                          </span>
                           <span className="px-2 py-0.5 bg-sky-500/20 text-sky-300 border border-sky-500/30 text-[10px] font-semibold rounded">
                             {fnc.categoryLimit}
                           </span>
