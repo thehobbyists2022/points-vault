@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy - PointsVault</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: #0f172a;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --primary: #f59e0b;
+      --accent: #6366f1;
+      --border: #1e293b;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      padding: 2rem 1rem;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      padding: 2.5rem;
+      border-radius: 1.5rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+    .header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+    }
+    h1 {
+      font-size: 1.75rem;
+      color: #ffffff;
+      font-weight: 800;
+    }
+    .last-updated {
+      font-size: 0.875rem;
+      color: var(--primary);
+      margin-top: 0.25rem;
+    }
+    h2 {
+      font-size: 1.25rem;
+      color: #f8fafc;
+      margin: 2rem 0 0.75rem 0;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      font-size: 1rem;
+      color: #cbd5e1;
+      margin: 1.25rem 0 0.5rem 0;
+    }
+    p, ul, ol {
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+    ul, ol {
+      padding-left: 1.5rem;
+    }
+    li {
+      margin-bottom: 0.5rem;
+    }
+    .highlight-box {
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      margin: 1.5rem 0;
+    }
+    .highlight-box p {
+      color: #e2e8f0;
+      margin-bottom: 0;
+    }
+    a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="/icon-192.png" alt="PointsVault Logo" class="logo" />
+      <div>
+        <h1>PointsVault Privacy Policy</h1>
+        <div class="last-updated">Last Updated & Effective: August 29, 2026</div>
+      </div>
+    </div>
+
+    <div class="highlight-box">
+      <p><strong>Summary:</strong> PointsVault is built with a <strong>Local-First & Privacy-By-Design</strong> architecture. Your credit card information, points balance, and statements are processed and stored locally on your device by default. We do not sell your personal data, track your Advertising ID, or read sensitive banking credentials.</p>
+    </div>
+
+    <h2>1. Introduction</h2>
+    <p>This Privacy Policy explains how <strong>The Hobbyists</strong> ("we", "our", or "us") collects, uses, and safeguards information in relation to our mobile application and web service, <strong>PointsVault</strong> (Application ID: <code>com.thehobbyists.pointsvault</code>).</p>
+
+    <h2>2. Information We Collect and How We Use It</h2>
+    
+    <h3>A. Local-First User Data (Stored On Your Device)</h3>
+    <p>By default, all data you enter into PointsVault is stored directly in your device's secure local storage (<code>localStorage</code> / encrypted app sandbox). This includes:</p>
+    <ul>
+      <li>Card portfolios, credit limits, opening dates, and Chase 5/24 status.</li>
+      <li>Points and airline miles balances, hotel loyalty tiers, and Free Night Certificates (FNC).</li>
+      <li>Minimum Spend Requirement (MSR) tracking and custom CPP valuation settings.</li>
+      <li>Player profiles (P1 / P2 household nicknames).</li>
+    </ul>
+
+    <h3>B. Bank Statement CSV Parser (Client-Side Only)</h3>
+    <p>When you use the Statement Parser to track MSR spend, CSV files are processed <strong>100% locally in your browser/device memory</strong>. Statement files are never transmitted, uploaded, or stored on our servers.</p>
+
+    <h3>C. Optional Account Information (Cloud Sync)</h3>
+    <p>If you optionally choose to create an account to sync data across devices:</p>
+    <ul>
+      <li>We collect your email address and password hash via Supabase Authentication.</li>
+      <li>Your encrypted settings and card states are synced to our cloud database.</li>
+      <li>You can use the app completely offline without creating an account.</li>
+    </ul>
+
+    <h3>D. Advertising ID & Analytics</h3>
+    <p><strong>PointsVault does NOT collect, use, or share Google Advertising ID (AAID) or Apple IDFA.</strong> We do not track users across third-party apps or websites for targeted advertising.</p>
+
+    <h2>3. Third-Party Services</h2>
+    <p>We may integrate trusted third-party service providers to support application infrastructure:</p>
+    <ul>
+      <li><strong>Cloudflare:</strong> Secure content delivery network (CDN) and web hosting.</li>
+      <li><strong>Supabase:</strong> Cloud database and authentication for optional cross-device synchronization.</li>
+      <li><strong>External Merchant / Issuer Links:</strong> When you voluntarily click an external link (such as a credit card application or loyalty program login), you will be redirected to the respective third-party website, which is governed by their own privacy policies.</li>
+    </ul>
+
+    <h2>4. Data Security and Storage</h2>
+    <p>We implement industry-standard security practices, including HTTPS/TLS encryption for all data in transit. Because user data is stored locally on your device by default, you retain full control over your data.</p>
+
+    <h2>5. User Data Deletion Rights</h2>
+    <p>You have full control over your data at all times:</p>
+    <ul>
+      <li><strong>Local Data:</strong> You can delete all local data at any time by clicking "Reset / Fresh Wallet" in the app or clearing your application/browser cache.</li>
+      <li><strong>Cloud Account Deletion:</strong> If you registered an account, you can request immediate and permanent deletion of your account and all associated data by emailing us at <a href="mailto:thehobbyists2022@gmail.com">thehobbyists2022@gmail.com</a>.</li>
+    </ul>
+
+    <h2>6. Children's Privacy</h2>
+    <p>PointsVault is designed for adult financial portfolio management (target audience 18 and older) and does not knowingly collect personal information from children under the age of 13 (or 16 in certain jurisdictions).</p>
+
+    <h2>7. Changes to This Privacy Policy</h2>
+    <p>We may update this Privacy Policy periodically. Any updates will be posted on this page with an updated "Last Updated" date.</p>
+
+    <h2>8. Contact Us</h2>
+    <p>If you have any questions or concerns about this Privacy Policy or your data, please contact us at:</p>
+    <ul>
+      <li><strong>Developer:</strong> The Hobbyists</li>
+      <li><strong>Email:</strong> <a href="mailto:thehobbyists2022@gmail.com">thehobbyists2022@gmail.com</a></li>
+      <li><strong>Website:</strong> <a href="https://points-vault-app.pages.dev/">https://points-vault-app.pages.dev/</a></li>
+    </ul>
+
+    <div class="footer">
+      &copy; 2026 PointsVault by The Hobbyists. All rights reserved.
+    </div>
+  </div>
+</body>
+</html>

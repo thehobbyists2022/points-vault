@@ -189,8 +189,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
         )}
 
         <div className="text-[10px] text-slate-500 flex items-center justify-between border-t border-slate-800/80 pt-2 mt-2.5">
-          <span>v3.0.0</span>
-          <span className="text-emerald-400">{language === 'en' ? 'System Ready' : '系統就緒'}</span>
+          <a
+            href="/privacy.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-slate-400 hover:text-amber-400 underline transition-colors"
+          >
+            {language === 'en' ? 'Privacy Policy' : '隱私權政策'}
+          </a>
+          <span className="text-emerald-400">v3.0.0 • {language === 'en' ? 'System Ready' : '系統就緒'}</span>
         </div>
       </div>
     </aside>
