@@ -213,7 +213,7 @@ export const Header: React.FC<HeaderProps> = ({
           href="/privacy.html"
           target="_blank"
           rel="noopener noreferrer"
-          className="hidden lg:flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:text-emerald-300 hover:border-emerald-400/40 rounded-xl text-xs font-medium transition-all"
+          className="flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:text-emerald-300 hover:border-emerald-400/40 rounded-xl text-xs font-medium transition-all"
           title="View Privacy Policy"
         >
           <ShieldCheck className="w-3.5 h-3.5" />
