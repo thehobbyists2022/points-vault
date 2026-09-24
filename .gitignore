@@ -26,3 +26,6 @@ dist-ssr
 # Test / tooling artifacts
 .playwright-mcp/
 *.tsbuildinfo
+
+# App Store screenshots (generated locally)
+appstore_screenshots/

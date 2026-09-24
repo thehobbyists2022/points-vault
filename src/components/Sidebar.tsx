@@ -122,9 +122,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   return (
-    <aside className="w-full md:w-64 glass-panel border-r border-slate-800 p-4 flex flex-col justify-between shrink-0">
-      <div className="space-y-1">
-        <div className="px-3 py-2 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+    <aside className="w-full md:w-64 glass-panel border-b md:border-b-0 md:border-r border-slate-800 p-2 md:p-4 flex flex-col justify-between shrink-0">
+      <div className="flex md:flex-col gap-1 md:space-y-1 overflow-x-auto md:overflow-visible pb-1">
+        <div className="hidden md:block px-3 py-2 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
           {language === 'en' ? 'Navigation Menu' : '功能導航菜單'}
         </div>
         {menuItems.map((item) => {
@@ -134,7 +134,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-medium transition-all ${
+              className={`shrink-0 md:w-full whitespace-nowrap flex items-center justify-between gap-2 px-3 md:px-3.5 py-2 md:py-3 rounded-xl text-xs font-medium transition-all ${
                 isActive
                   ? 'bg-gradient-to-r from-indigo-600/90 to-purple-600/90 text-white font-semibold shadow-lg shadow-indigo-500/15 border border-indigo-400/30'
                   : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
@@ -157,7 +157,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Pro Upgrade / App Info Footer Box */}
-      <div className="mt-6 p-3.5 bg-gradient-to-b from-indigo-950/40 to-slate-900/80 border border-amber-500/20 rounded-2xl">
+      <div className="hidden md:block mt-6 p-3.5 bg-gradient-to-b from-indigo-950/40 to-slate-900/80 border border-amber-500/20 rounded-2xl">
         {ENABLE_PAYWALL && (
           <>
             <div className="flex items-center justify-between mb-1.5">

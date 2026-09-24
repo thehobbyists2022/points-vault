@@ -157,7 +157,7 @@ export function App() {
       <DemoBanner onOpenWizard={() => setWizardOpen(true)} />
 
       {/* Main Workspace Layout */}
-      <div className="flex-1 flex flex-col md:flex-row w-full max-w-[1600px] mx-auto p-4 md:p-6 gap-6">
+      <div className="flex-1 flex flex-col md:flex-row w-full max-w-[1600px] mx-auto p-3 md:p-6 gap-3 md:gap-6">
         {/* Left Sidebar Menu */}
         <Sidebar
           activeTab={activeTab}

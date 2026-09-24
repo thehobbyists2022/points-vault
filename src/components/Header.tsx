@@ -42,7 +42,7 @@ export const Header: React.FC<HeaderProps> = ({
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 w-full glass-panel border-b border-slate-800 px-4 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+    <header className="sticky top-0 z-40 w-full bg-[#090d16]/95 backdrop-blur-md border-b border-slate-800 px-3 sm:px-4 lg:px-8 py-2.5 sm:py-3.5 flex flex-wrap items-center justify-between gap-2 sm:gap-4">
       {/* Brand Logo */}
       <div className="flex items-center space-x-3">
         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-600 to-amber-500 p-0.5 shadow-lg shadow-indigo-500/20">
@@ -55,16 +55,16 @@ export const Header: React.FC<HeaderProps> = ({
             <h1 className="text-xl font-bold bg-gradient-to-r from-white via-slate-200 to-amber-300 bg-clip-text text-transparent tracking-tight">
               PointsVault
             </h1>
-            <span className="px-2 py-0.5 text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full">
+            <span className="hidden sm:inline-flex px-2 py-0.5 text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full">
               {ENABLE_PAYWALL ? 'PRO All-in-One' : 'All-in-One'}
             </span>
           </div>
-          <p className="text-xs text-slate-400">{t(language, 'brandSubtitle')}</p>
+          <p className="hidden sm:block text-xs text-slate-400">{t(language, 'brandSubtitle')}</p>
         </div>
       </div>
 
       {/* Household / P1 / P2 Switcher & Stats */}
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
         {/* Language Switcher Pill */}
         <div className="flex items-center bg-slate-950/80 border border-slate-800 p-1 rounded-xl">
           <Globe className="w-3.5 h-3.5 text-slate-400 ml-1.5 mr-1" />
@@ -215,7 +215,7 @@ export const Header: React.FC<HeaderProps> = ({
           href="/privacy.html"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:text-emerald-300 hover:border-emerald-400/40 rounded-xl text-xs font-medium transition-all"
+          className="hidden md:flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:text-emerald-300 hover:border-emerald-400/40 rounded-xl text-xs font-medium transition-all"
           title="View Privacy Policy"
         >
           <ShieldCheck className="w-3.5 h-3.5" />
