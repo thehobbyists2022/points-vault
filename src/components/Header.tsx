@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { ShieldCheck, UserCheck, Wallet, Sparkles, Layers, Bell, Globe, Cloud, CloudOff, HardDrive, Crown } from 'lucide-react';
 import type { UserProfile } from '../data/mockData';
 import { BackupRestoreModal } from './BackupRestoreModal';
+import { ProfileSettingsModal } from './ProfileSettingsModal';
 import { useAppStore } from '../store/useAppStore';
 import { t } from '../i18n/translations';
+import { ENABLE_PAYWALL } from '../config/flags';
 
 interface HeaderProps {
   profile: UserProfile;
@@ -37,6 +39,7 @@ export const Header: React.FC<HeaderProps> = ({
   const isPro = useAppStore((s) => s.isPro);
   const proPlan = useAppStore((s) => s.proPlan);
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 w-full glass-panel border-b border-slate-800 px-4 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
@@ -53,7 +56,7 @@ export const Header: React.FC<HeaderProps> = ({
               PointsVault
             </h1>
             <span className="px-2 py-0.5 text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full">
-              PRO All-in-One
+              {ENABLE_PAYWALL ? 'PRO All-in-One' : 'All-in-One'}
             </span>
           </div>
           <p className="text-xs text-slate-400">{t(language, 'brandSubtitle')}</p>
@@ -103,19 +106,21 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Pro Upgrade / Pro Status Badge */}
-        <button
-          onClick={onOpenProModal}
-          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md cursor-pointer ${
-            isPro
-              ? 'bg-gradient-to-r from-amber-500/20 to-yellow-500/20 text-amber-300 border border-amber-400/50 hover:brightness-110 shadow-amber-500/10'
-              : 'bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 hover:brightness-110 shadow-amber-500/20 active:scale-95'
-          }`}
-          title={isPro ? `PointsVault Pro (${proPlan.toUpperCase()})` : t(language, 'proUpgradeTitle')}
-        >
-          <Crown className={`w-3.5 h-3.5 ${isPro ? 'text-amber-400 fill-amber-400' : 'text-slate-950 fill-slate-950'}`} />
-          <span>{isPro ? t(language, 'proCurrentMember') : t(language, 'proUpgradeBtn')}</span>
-        </button>
+        {/* Pro Upgrade / Pro Status Badge (hidden when paywall disabled) */}
+        {ENABLE_PAYWALL && (
+          <button
+            onClick={onOpenProModal}
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md cursor-pointer ${
+              isPro
+                ? 'bg-gradient-to-r from-amber-500/20 to-yellow-500/20 text-amber-300 border border-amber-400/50 hover:brightness-110 shadow-amber-500/10'
+                : 'bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 hover:brightness-110 shadow-amber-500/20 active:scale-95'
+            }`}
+            title={isPro ? `PointsVault Pro (${proPlan.toUpperCase()})` : t(language, 'proUpgradeTitle')}
+          >
+            <Crown className={`w-3.5 h-3.5 ${isPro ? 'text-amber-400 fill-amber-400' : 'text-slate-950 fill-slate-950'}`} />
+            <span>{isPro ? t(language, 'proCurrentMember') : t(language, 'proUpgradeBtn')}</span>
+          </button>
+        )}
 
         {/* Backup & Restore Button */}
         <button
@@ -194,18 +199,15 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Signed-in User Avatar / Email / Sign Out */}
         {userEmail && (
-          <div className="hidden lg:flex items-center space-x-2 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5">
+          <button
+            onClick={() => setIsProfileModalOpen(true)}
+            className="hidden lg:flex items-center space-x-2 bg-slate-900 border border-slate-800 hover:bg-slate-800/80 hover:border-slate-700 rounded-xl px-3 py-1.5 transition-all cursor-pointer"
+          >
             <div className="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-[10px] font-bold">
               {userEmail[0].toUpperCase()}
             </div>
             <span className="text-xs text-slate-300 max-w-[120px] truncate">{userEmail}</span>
-            <button
-              onClick={onSignOut}
-              className="text-[10px] text-slate-500 hover:text-rose-400 transition-colors font-semibold ml-1"
-            >
-              Sign Out
-            </button>
-          </div>
+          </button>
         )}
 
         {/* Privacy Badge */}
@@ -226,6 +228,15 @@ export const Header: React.FC<HeaderProps> = ({
         isOpen={isBackupModalOpen}
         onClose={() => setIsBackupModalOpen(false)}
       />
+      
+      {onSignOut && (
+        <ProfileSettingsModal
+          isOpen={isProfileModalOpen}
+          onClose={() => setIsProfileModalOpen(false)}
+          userEmail={userEmail ?? null}
+          onSignOut={onSignOut}
+        />
+      )}
     </header>
   );
 };

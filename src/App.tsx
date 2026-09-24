@@ -15,6 +15,7 @@ import { AuthModal } from './components/AuthModal';
 import { DemoBanner } from './components/DemoBanner';
 import { OnboardingWizardModal } from './components/OnboardingWizardModal';
 import { ProUpgradeModal } from './components/ProUpgradeModal';
+import { ENABLE_PAYWALL } from './config/flags';
 import { useState, useEffect } from 'react';
 import { onAuthStateChange, isSupabaseConfigured, supabase, signOut } from './lib/supabase';
 import { pushToCloud, pullFromCloud } from './lib/sync';
@@ -258,11 +259,13 @@ export function App() {
         onClose={() => setWizardOpen(false)}
       />
 
-      {/* Pro Upgrade Subscription & Lifetime Buyout Modal */}
-      <ProUpgradeModal
-        isOpen={proModalOpen}
-        onClose={() => setProModalOpen(false)}
-      />
+      {/* Pro Upgrade Subscription & Lifetime Buyout Modal (paywall disabled until StoreKit IAP is wired) */}
+      {ENABLE_PAYWALL && (
+        <ProUpgradeModal
+          isOpen={proModalOpen}
+          onClose={() => setProModalOpen(false)}
+        />
+      )}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { nativeStorage } from '../lib/storage';
 import {
   MOCK_CARDS,
   MOCK_AIRLINE_PROGRAMS,
@@ -436,6 +437,7 @@ export const useAppStore = create<AppState>()(
     {
       name: 'points-vault-storage',
       version: 6,
+      storage: createJSONStorage(() => nativeStorage),
       partialize: (state) => ({
         language: state.language,
         cards: state.cards,
