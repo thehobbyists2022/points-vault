@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { X, User, LogOut, Trash2, AlertTriangle, Loader2 } from 'lucide-react';
+import { X, User, LogOut, Trash2, AlertTriangle, Loader2, Users, Save } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { signOut } from '../lib/supabase';
+import { t } from '../i18n/translations';
 
 interface ProfileSettingsModalProps {
   isOpen: boolean;
@@ -10,6 +11,11 @@ interface ProfileSettingsModalProps {
   onSignOut: () => void;
 }
 
+const stripPlayerSuffix = (name: string, player: 'P1' | 'P2') => {
+  const cleaned = name.replace(/\s*\(P\d+\)\s*$/i, '').trim();
+  return cleaned || `${player}`;
+};
+
 export const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
   isOpen,
   onClose,
@@ -17,11 +23,33 @@ export const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
   onSignOut,
 }) => {
   const language = useAppStore((s) => s.language);
+  const profile = useAppStore((s) => s.profile);
+  const setProfile = useAppStore((s) => s.setProfile);
   const clearToFreshWallet = useAppStore((s) => s.clearToFreshWallet);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [p1Draft, setP1Draft] = useState<string | null>(null);
+  const [p2Draft, setP2Draft] = useState<string | null>(null);
+  const [savedFlash, setSavedFlash] = useState(false);
 
   if (!isOpen) return null;
+
+  const p1Value = p1Draft ?? stripPlayerSuffix(profile.p1Name, 'P1');
+  const p2Value = p2Draft ?? stripPlayerSuffix(profile.p2Name, 'P2');
+
+  const handleSaveNames = () => {
+    setProfile((prev) => ({
+      ...prev,
+      p1Name: `${(p1Draft ?? stripPlayerSuffix(prev.p1Name, 'P1')).trim()} (P1)`,
+      p2Name: `${(p2Draft ?? stripPlayerSuffix(prev.p2Name, 'P2')).trim()} (P2)`,
+    }));
+    setP1Draft(null);
+    setP2Draft(null);
+    setSavedFlash(true);
+    setTimeout(() => setSavedFlash(false), 1600);
+  };
+
+  const namesDirty = p1Draft !== null || p2Draft !== null;
 
   const handleRequestDeletion = async () => {
     if (isSubmitting) return;
@@ -76,6 +104,63 @@ export const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({
         </div>
 
         <div className="space-y-6">
+          {/* Household Members */}
+          <div className="bg-slate-900/80 rounded-xl p-4 border border-slate-800 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Users className="w-4 h-4 text-amber-400" />
+                <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide">
+                  {t(language, 'householdModalTitle')}
+                </p>
+              </div>
+              <p className="text-[10px] text-slate-500 leading-snug max-w-[200px] text-right">
+                {t(language, 'householdModalDesc')}
+              </p>
+            </div>
+            <div className="space-y-2">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-indigo-300 uppercase tracking-wide">{t(language, 'p1NameLabel')}</label>
+                <input
+                  type="text"
+                  value={p1Value}
+                  maxLength={20}
+                  placeholder={t(language, 'p1NamePlaceholder')}
+                  onChange={(e) => setP1Draft(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-purple-300 uppercase tracking-wide">{t(language, 'p2NameLabel')}</label>
+                <input
+                  type="text"
+                  value={p2Value}
+                  maxLength={20}
+                  placeholder={t(language, 'p2NamePlaceholder')}
+                  onChange={(e) => setP2Draft(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 transition-colors"
+                />
+              </div>
+            </div>
+            <button
+              onClick={handleSaveNames}
+              disabled={!namesDirty}
+              className={`w-full flex items-center justify-center space-x-2 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                namesDirty
+                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-500/20 hover:brightness-110 cursor-pointer'
+                  : 'bg-slate-800/60 text-slate-500 cursor-default'
+              }`}
+            >
+              <Save className="w-3.5 h-3.5" />
+              <span>
+                {savedFlash
+                  ? (language === 'en' ? 'Saved!' : '已儲存！')
+                  : namesDirty
+                  ? (language === 'en' ? t(language, 'saveMemberChanges') : t(language, 'saveMemberChanges'))
+                  : (language === 'en' ? 'No Changes' : '沒有變更')}
+              </span>
+            </button>
+          </div>
+
           {/* User Info */}
           <div className="bg-slate-900/80 rounded-xl p-4 border border-slate-800">
             <p className="text-xs text-slate-500 font-semibold mb-1">

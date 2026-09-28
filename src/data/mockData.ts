@@ -214,6 +214,7 @@ export interface TransferPartner {
 export interface UserProfile {
   p1Name: string;
   p2Name: string;
+  hasP2?: boolean;
   activePlayer: 'P1' | 'P2' | 'All';
   // Real 24-month rolling model: ISO dates (YYYY-MM-DD) each personal card was opened.
   chase524OpeningsP1: string[];
@@ -223,6 +224,7 @@ export interface UserProfile {
 export const INITIAL_PROFILE: UserProfile = {
   p1Name: 'Matrix (P1)',
   p2Name: 'Alex (P2)',
+  hasP2: true,
   activePlayer: 'All',
   chase524OpeningsP1: ['2025-01-10', '2025-06-18', '2026-03-05'],
   chase524OpeningsP2: ['2025-09-22'],

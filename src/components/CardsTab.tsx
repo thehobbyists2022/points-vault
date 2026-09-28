@@ -182,7 +182,7 @@ export const CardsTab: React.FC<CardsTabProps> = ({
                 >
                   <div className="flex items-center justify-between">
                     <span className="px-2.5 py-0.5 bg-black/40 text-white/90 border border-white/10 text-[10px] font-bold rounded-full backdrop-blur-md">
-                      {card.issuer} • {card.player} {t(language, 'cardHolder')}
+                      {card.issuer} • {card.player === 'P1' ? profile.p1Name : profile.p2Name} {t(language, 'cardHolder')}
                     </span>
                     <div className="flex items-center space-x-2">
                       <span className="text-xs font-bold text-white/40 tracking-widest uppercase">
@@ -387,7 +387,7 @@ export const CardsTab: React.FC<CardsTabProps> = ({
           isOpen={Boolean(editingCard)}
           onClose={() => setEditingCard(null)}
           title={editingCard.name}
-          subtitle={`${editingCard.issuer} • ${editingCard.player}`}
+          subtitle={`${editingCard.issuer} • ${editingCard.player === 'P1' ? profile.p1Name : profile.p2Name}`}
           currentBalance={editingCard.currentBalance}
           currencyName={editingCard.pointsCurrency || 'Points'}
           cppValue={editingCard.cppValue}

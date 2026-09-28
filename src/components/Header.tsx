@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { ShieldCheck, UserCheck, Wallet, Sparkles, Layers, Bell, Globe, Cloud, CloudOff, HardDrive, Crown } from 'lucide-react';
+import { ShieldCheck, User, UserCheck, Wallet, Sparkles, Layers, Bell, Globe, Cloud, CloudOff, HardDrive, Crown, UserCog } from 'lucide-react';
 import type { UserProfile } from '../data/mockData';
 import { BackupRestoreModal } from './BackupRestoreModal';
 import { ProfileSettingsModal } from './ProfileSettingsModal';
+import { HouseholdSettingsModal } from './HouseholdSettingsModal';
 import { useAppStore } from '../store/useAppStore';
 import { t } from '../i18n/translations';
 import { ENABLE_PAYWALL } from '../config/flags';
@@ -40,6 +41,7 @@ export const Header: React.FC<HeaderProps> = ({
   const proPlan = useAppStore((s) => s.proPlan);
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isHouseholdModalOpen, setIsHouseholdModalOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 w-full bg-[#090d16]/95 backdrop-blur-md border-b border-slate-800 px-3 sm:px-4 lg:px-8 py-2.5 sm:py-3.5 flex flex-wrap items-center justify-between gap-2 sm:gap-4">
@@ -184,31 +186,49 @@ export const Header: React.FC<HeaderProps> = ({
             <UserCheck className="w-3.5 h-3.5 text-indigo-300" />
             <span>{profile.p1Name}</span>
           </button>
+          {profile.hasP2 !== false && (
+            <button
+              onClick={() => setProfile((p) => ({ ...p, activePlayer: 'P2' }))}
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                profile.activePlayer === 'P2'
+                  ? 'bg-purple-600 text-white shadow-md shadow-purple-500/20'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <UserCheck className="w-3.5 h-3.5 text-purple-300" />
+              <span>{profile.p2Name}</span>
+            </button>
+          )}
           <button
-            onClick={() => setProfile((p) => ({ ...p, activePlayer: 'P2' }))}
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              profile.activePlayer === 'P2'
-                ? 'bg-purple-600 text-white shadow-md shadow-purple-500/20'
-                : 'text-slate-400 hover:text-white'
-            }`}
+            onClick={() => setIsHouseholdModalOpen(true)}
+            title={t(language, 'editHousehold')}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-300 hover:bg-slate-800/80 transition-all border border-transparent hover:border-slate-700/60 ml-0.5"
+            aria-label={t(language, 'editHousehold')}
           >
-            <UserCheck className="w-3.5 h-3.5 text-purple-300" />
-            <span>{profile.p2Name}</span>
+            <UserCog className="w-3.5 h-3.5 text-slate-400 hover:text-indigo-400" />
           </button>
         </div>
 
-        {/* Signed-in User Avatar / Email / Sign Out */}
-        {userEmail && (
-          <button
-            onClick={() => setIsProfileModalOpen(true)}
-            className="hidden lg:flex items-center space-x-2 bg-slate-900 border border-slate-800 hover:bg-slate-800/80 hover:border-slate-700 rounded-xl px-3 py-1.5 transition-all cursor-pointer"
-          >
-            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-[10px] font-bold">
-              {userEmail[0].toUpperCase()}
-            </div>
-            <span className="text-xs text-slate-300 max-w-[120px] truncate">{userEmail}</span>
-          </button>
-        )}
+        {/* Settings (Household Names / Account) — always available */}
+        <button
+          onClick={() => setIsProfileModalOpen(true)}
+          title={userEmail ? userEmail : (language === 'en' ? 'Settings' : '設定')}
+          className="hidden lg:flex items-center space-x-2 bg-slate-900 border border-slate-800 hover:bg-slate-800/80 hover:border-slate-700 rounded-xl px-3 py-1.5 transition-all cursor-pointer"
+        >
+          {userEmail ? (
+            <>
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-[10px] font-bold">
+                {userEmail[0].toUpperCase()}
+              </div>
+              <span className="text-xs text-slate-300 max-w-[120px] truncate">{userEmail}</span>
+            </>
+          ) : (
+            <>
+              <User className="w-4 h-4 text-slate-400" />
+              <span className="text-xs text-slate-300">{language === 'en' ? 'Settings' : '設定'}</span>
+            </>
+          )}
+        </button>
 
         {/* Privacy Badge */}
         <a
@@ -237,6 +257,11 @@ export const Header: React.FC<HeaderProps> = ({
           onSignOut={onSignOut}
         />
       )}
+
+      <HouseholdSettingsModal
+        isOpen={isHouseholdModalOpen}
+        onClose={() => setIsHouseholdModalOpen(false)}
+      />
     </header>
   );
 };

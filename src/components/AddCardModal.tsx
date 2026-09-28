@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { X, Sparkles, Plus, Search, ShieldCheck, Layers } from 'lucide-react';
 import type { CreditCard } from '../data/mockData';
 import { useAppStore } from '../store/useAppStore';
@@ -286,7 +286,8 @@ const PRESET_CARDS: Omit<CreditCard, 'id' | 'player'>[] = [
 
 export const AddCardModal: React.FC<AddCardModalProps> = ({ isOpen, onClose, onAddCard }) => {
   const language = useAppStore((s) => s.language);
-  const activePlayer = useAppStore((s) => s.profile.activePlayer);
+  const profile = useAppStore((s) => s.profile);
+  const activePlayer = profile.activePlayer;
   const defaultPlayer = activePlayer === 'P2' ? 'P2' : 'P1';
 
   const [activeMode, setActiveMode] = useState<'presets' | 'custom'>('presets');
@@ -442,17 +443,19 @@ export const AddCardModal: React.FC<AddCardModalProps> = ({ isOpen, onClose, onA
                         presetPlayer === 'P1' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'
                       }`}
                     >
-                      P1
+                      {profile.p1Name || 'P1'}
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => setPresetPlayer('P2')}
-                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${
-                        presetPlayer === 'P2' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      P2
-                    </button>
+                    {profile.hasP2 !== false && (
+                      <button
+                        type="button"
+                        onClick={() => setPresetPlayer('P2')}
+                        className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${
+                          presetPlayer === 'P2' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        {profile.p2Name || 'P2'}
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -600,17 +603,19 @@ export const AddCardModal: React.FC<AddCardModalProps> = ({ isOpen, onClose, onA
                         customPlayer === 'P1' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'
                       }`}
                     >
-                      P1
+                      {profile.p1Name || 'P1'}
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => setCustomPlayer('P2')}
-                      className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-colors ${
-                        customPlayer === 'P2' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      P2
-                    </button>
+                    {profile.hasP2 !== false && (
+                      <button
+                        type="button"
+                        onClick={() => setCustomPlayer('P2')}
+                        className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                          customPlayer === 'P2' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        {profile.p2Name || 'P2'}
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
