@@ -60,3 +60,45 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #334155;
 }
+
+/* High Contrast Mode (OLED Pure Black & Ultra Crisp Outlines) */
+html.high-contrast,
+body.high-contrast {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+html.high-contrast .bg-\[\#090d16\],
+html.high-contrast div[class*="bg-[#090d16]"] {
+  background-color: #000000 !important;
+}
+
+html.high-contrast header {
+  background-color: #000000 !important;
+  border-bottom-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+html.high-contrast .glass-panel,
+html.high-contrast .glass-card {
+  background-color: #000000 !important;
+  border-color: rgba(255, 255, 255, 0.45) !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3) !important;
+}
+
+html.high-contrast .border-slate-800,
+html.high-contrast .border-slate-700,
+html.high-contrast .border-slate-900 {
+  border-color: rgba(255, 255, 255, 0.38) !important;
+}
+
+html.high-contrast .bg-slate-900,
+html.high-contrast .bg-slate-950 {
+  background-color: #050508 !important;
+}
+
+html.high-contrast .text-slate-400,
+html.high-contrast .text-slate-500 {
+  color: #e2e8f0 !important;
+}
+
+

@@ -39,8 +39,10 @@ interface AppState {
   isPro: boolean;
   proPlan: 'free' | 'monthly' | 'annual' | 'lifetime';
   proExpiresAt: string | null;
+  isHighContrast: boolean;
 
   setLanguage: (lang: Language) => void;
+  toggleHighContrast: () => void;
   setActiveTab: (tab: TabType) => void;
   setProfile: (updater: UserProfile | ((prev: UserProfile) => UserProfile)) => void;
   setUserEmail: (email: string | null) => void;
@@ -120,8 +122,10 @@ export const useAppStore = create<AppState>()(
       isPro: false,
       proPlan: 'free',
       proExpiresAt: null,
+      isHighContrast: false,
 
       setLanguage: (lang) => set({ language: lang }),
+      toggleHighContrast: () => set((state) => ({ isHighContrast: !state.isHighContrast })),
       setActiveTab: (tab) => set({ activeTab: tab }),
       setUserEmail: (email) => set({ userEmail: email }),
       setIsDemoMode: (isDemo) => set({ isDemoMode: isDemo }),
@@ -459,6 +463,7 @@ export const useAppStore = create<AppState>()(
         isPro: state.isPro,
         proPlan: state.proPlan,
         proExpiresAt: state.proExpiresAt,
+        isHighContrast: state.isHighContrast,
       }),
       migrate: (persistedState, version) => {
         const state = persistedState as Partial<AppState> | undefined;
@@ -560,6 +565,7 @@ export const useAppStore = create<AppState>()(
           isPro: Boolean(state?.isPro),
           proPlan: state?.proPlan ?? 'free',
           proExpiresAt: state?.proExpiresAt ?? null,
+          isHighContrast: Boolean(state?.isHighContrast),
         };
         if (version < 2 && profile) {
           // Upgrade legacy counter-based model (chase524CountP1/P2) to date-window model.

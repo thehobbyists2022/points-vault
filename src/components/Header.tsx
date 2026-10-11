@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, User, UserCheck, Wallet, Sparkles, Layers, Bell, Globe, Cloud, CloudOff, HardDrive, Crown, UserCog, Wrench } from 'lucide-react';
+import { ShieldCheck, User, UserCheck, Wallet, Sparkles, Layers, Bell, Globe, Cloud, CloudOff, HardDrive, Crown, UserCog, Wrench, Contrast } from 'lucide-react';
 import type { UserProfile } from '../data/mockData';
 import { BackupRestoreModal } from './BackupRestoreModal';
 import { ProfileSettingsModal } from './ProfileSettingsModal';
@@ -43,6 +43,8 @@ export const Header: React.FC<HeaderProps> = ({
   const setLanguage = useAppStore((s) => s.setLanguage);
   const isPro = useAppStore((s) => s.isPro);
   const proPlan = useAppStore((s) => s.proPlan);
+  const isHighContrast = useAppStore((s) => s.isHighContrast);
+  const toggleHighContrast = useAppStore((s) => s.toggleHighContrast);
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isHouseholdModalOpen, setIsHouseholdModalOpen] = useState(false);
@@ -95,6 +97,21 @@ export const Header: React.FC<HeaderProps> = ({
             中文
           </button>
         </div>
+
+        {/* High Contrast Mode Switcher Button */}
+        <button
+          onClick={toggleHighContrast}
+          title={t(language, 'contrastTooltip')}
+          className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border transition-all cursor-pointer text-xs font-bold ${
+            isHighContrast
+              ? 'bg-white text-slate-950 border-white shadow-lg ring-2 ring-white/60'
+              : 'bg-slate-950/80 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
+          }`}
+          aria-label={t(language, 'contrastBtn')}
+        >
+          <Contrast className={`w-3.5 h-3.5 ${isHighContrast ? 'text-slate-950' : 'text-slate-400'}`} />
+          <span className="hidden md:inline">{t(language, 'contrastBtn')}</span>
+        </button>
 
         {/* Total Net Worth Counter */}
         <div className="hidden sm:flex items-center space-x-3 bg-slate-900/80 border border-slate-800 rounded-xl px-3.5 py-1.5">

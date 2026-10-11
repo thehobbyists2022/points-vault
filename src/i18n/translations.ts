@@ -387,6 +387,10 @@ export const translations = {
     step4Title: "4. Power Tools Suite",
     step4Desc: "Click Tools ⚙️ anytime for Chase 5/24 tracker, Transfer Bonus matrix, Car CDW, and Statement upload.",
     quickGuideGotIt: "Got it, let's go!",
+
+    // High Contrast
+    contrastBtn: "Contrast",
+    contrastTooltip: "Toggle High Contrast Mode (OLED Pure Black & Sharp Borders)",
   },
   zh: {
     // Header
@@ -774,6 +778,10 @@ export const translations = {
     step4Title: "4. 進階玩卡工具箱",
     step4Desc: "隨時點擊「進階工具箱 ⚙️」，即可一鍵呼叫 5/24 槽位分析、轉點加贈矩陣、租車 CDW 與帳單解析。",
     quickGuideGotIt: "我知道了，開始體驗！",
+
+    // High Contrast
+    contrastBtn: "對比度",
+    contrastTooltip: "切換高對比度模式 (OLED 純黑 / 銳利邊框)",
   }
 };
 

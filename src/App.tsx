@@ -67,6 +67,7 @@ export function App() {
   const profile = useAppStore((s) => s.profile);
   const activeTab = useAppStore((s) => s.activeTab);
   const notifications = useAppStore((s) => s.notifications);
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
   const userEmail = useAppStore((s) => s.userEmail);
 
   const setActiveTab = useAppStore((s) => s.setActiveTab);
@@ -82,7 +83,16 @@ export function App() {
   const clearAllNotifs = useAppStore((s) => s.clearAllNotifs);
   const regenerateNotifs = useAppStore((s) => s.regenerateNotifs);
 
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
+  const isHighContrast = useAppStore((s) => s.isHighContrast);
+
+  // Sync high contrast mode to root document
+  useEffect(() => {
+    if (isHighContrast) {
+      document.documentElement.classList.add('high-contrast');
+    } else {
+      document.documentElement.classList.remove('high-contrast');
+    }
+  }, [isHighContrast]);
 
   // Keep alerts accurate whenever underlying data changes (perk claims, MSR
   // progress, cloud pulls, balance edits, FNC usage) instead of only at load.
