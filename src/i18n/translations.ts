@@ -23,7 +23,9 @@ export const translations = {
     privacyBadge: "Local Encrypted / Safe",
 
     // Sidebar Tabs
-    tabDashboard: "Dashboard",
+    tabVault: "Vault (Cards & Miles)",
+    tabDashboard: "Vault Overview",
+    toolsSuite: "Power Tools ⚙️",
     tabCards: "Cards & Perks",
     tabAirlines: "Airline Miles",
     tabHotels: "Hotels & FNC",
@@ -394,7 +396,9 @@ export const translations = {
     privacyBadge: "本地加密 / 無網銀密碼風險",
 
     // Sidebar Tabs
-    tabDashboard: "總覽概覽",
+    tabVault: "資產卡夾",
+    tabDashboard: "資產卡夾總覽",
+    toolsSuite: "進階工具箱 ⚙️",
     tabCards: "信用卡與福利",
     tabAirlines: "飛行里程與伴飛券",
     tabHotels: "酒店與 FNC 房券",

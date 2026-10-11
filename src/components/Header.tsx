@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, User, UserCheck, Wallet, Sparkles, Layers, Bell, Globe, Cloud, CloudOff, HardDrive, Crown, UserCog } from 'lucide-react';
+import { ShieldCheck, User, UserCheck, Wallet, Sparkles, Layers, Bell, Globe, Cloud, CloudOff, HardDrive, Crown, UserCog, Wrench } from 'lucide-react';
 import type { UserProfile } from '../data/mockData';
 import { BackupRestoreModal } from './BackupRestoreModal';
 import { ProfileSettingsModal } from './ProfileSettingsModal';
@@ -17,6 +17,7 @@ interface HeaderProps {
   onOpenNotifCenter: () => void;
   onOpenAuthModal: () => void;
   onOpenProModal: () => void;
+  onOpenToolsModal?: () => void;
   isSignedIn: boolean;
   userEmail?: string | null;
   onSignOut?: () => void;
@@ -34,6 +35,7 @@ export const Header: React.FC<HeaderProps> = ({
   isSignedIn,
   userEmail,
   onSignOut,
+  onOpenToolsModal,
 }) => {
   const language = useAppStore((s) => s.language);
   const setLanguage = useAppStore((s) => s.setLanguage);
@@ -208,6 +210,18 @@ export const Header: React.FC<HeaderProps> = ({
             <UserCog className="w-3.5 h-3.5 text-slate-400 hover:text-indigo-400" />
           </button>
         </div>
+
+        {/* Power Tools Suite Button (5/24, Transfers, CDW, Bonuses, CSV Parser) */}
+        {onOpenToolsModal && (
+          <button
+            onClick={onOpenToolsModal}
+            title={language === 'en' ? 'Power Tools (5/24, Transfers, CDW, Bonuses)' : '進階工具箱 (5/24、轉點、車險、開戶)'}
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-indigo-500/50 hover:bg-slate-800 text-slate-300 hover:text-white transition-all text-xs font-bold cursor-pointer"
+          >
+            <Wrench className="w-3.5 h-3.5 text-indigo-400" />
+            <span>{language === 'en' ? 'Tools ⚙️' : '工具箱 ⚙️'}</span>
+          </button>
+        )}
 
         {/* Settings (Household Names / Account) — always available */}
         <button

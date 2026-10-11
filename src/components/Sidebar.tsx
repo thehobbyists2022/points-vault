@@ -34,6 +34,7 @@ interface SidebarProps {
   unclaimedPerksCount: number;
   fncCount: number;
   onOpenProModal?: () => void;
+  onOpenToolsModal?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -42,6 +43,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   unclaimedPerksCount,
   fncCount,
   onOpenProModal,
+  onOpenToolsModal,
 }) => {
   const language = useAppStore((s) => s.language);
   const isPro = useAppStore((s) => s.isPro);
@@ -52,7 +54,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const menuItems: { id: TabType; translationKey: keyof typeof translations['en']; icon: React.ElementType; badge: string | null; badgeColor?: string }[] = [
     {
       id: 'dashboard',
-      translationKey: 'tabDashboard',
+      translationKey: 'tabVault',
       icon: LayoutDashboard,
       badge: null,
     },
@@ -130,28 +132,43 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
+          const isPowerToolStart = item.id === 'rules524';
           return (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`shrink-0 md:w-full whitespace-nowrap flex items-center justify-between gap-2 px-3 md:px-3.5 py-2 md:py-3 rounded-xl text-xs font-medium transition-all ${
-                isActive
-                  ? 'bg-gradient-to-r from-indigo-600/90 to-purple-600/90 text-white font-semibold shadow-lg shadow-indigo-500/15 border border-indigo-400/30'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-              }`}
-            >
-              <div className="flex items-center space-x-3">
-                <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                <span>{t(language, item.translationKey)}</span>
-              </div>
-              {item.badge && (
-                <span
-                  className={`px-2 py-0.5 text-[10px] font-semibold rounded-full border ${item.badgeColor}`}
-                >
-                  {item.badge}
-                </span>
+            <React.Fragment key={item.id}>
+              {isPowerToolStart && (
+                <div className="hidden md:flex items-center justify-between px-3 pt-3 pb-1 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-t border-slate-800/80 mt-2">
+                  <span>{language === 'en' ? 'Power Tools' : '進階工具箱'}</span>
+                  {onOpenToolsModal && (
+                    <button
+                      onClick={onOpenToolsModal}
+                      className="text-[10px] text-indigo-400 hover:text-indigo-300 font-semibold cursor-pointer"
+                    >
+                      {language === 'en' ? 'Open All ⚙️' : '全覽 ⚙️'}
+                    </button>
+                  )}
+                </div>
               )}
-            </button>
+              <button
+                onClick={() => setActiveTab(item.id)}
+                className={`shrink-0 md:w-full whitespace-nowrap flex items-center justify-between gap-2 px-3 md:px-3.5 py-2 md:py-3 rounded-xl text-xs font-medium transition-all ${
+                  isActive
+                    ? 'bg-gradient-to-r from-indigo-600/90 to-purple-600/90 text-white font-semibold shadow-lg shadow-indigo-500/15 border border-indigo-400/30'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                }`}
+              >
+                <div className="flex items-center space-x-3">
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                  <span>{t(language, item.translationKey)}</span>
+                </div>
+                {item.badge && (
+                  <span
+                    className={`px-2 py-0.5 text-[10px] font-semibold rounded-full border ${item.badgeColor}`}
+                  >
+                    {item.badge}
+                  </span>
+                )}
+              </button>
+            </React.Fragment>
           );
         })}
       </div>

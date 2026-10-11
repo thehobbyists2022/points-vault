@@ -10,6 +10,9 @@ import { TransferMatrixTab } from './components/TransferMatrixTab';
 import { Chase524Tab } from './components/Chase524Tab';
 import { BankBonusesTab } from './components/BankBonusesTab';
 import { AffiliateTab } from './components/AffiliateTab';
+import { UnifiedVaultTab } from './components/UnifiedVaultTab';
+import { PowerToolsModal } from './components/PowerToolsModal';
+import { QuickPresetCatalogModal } from './components/QuickPresetCatalogModal';
 import { NotificationCenter } from './components/NotificationCenter';
 import { AuthModal } from './components/AuthModal';
 import { DemoBanner } from './components/DemoBanner';
@@ -29,6 +32,9 @@ export function App() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [wizardOpen, setWizardOpen] = useState(false);
   const [proModalOpen, setProModalOpen] = useState(false);
+  const [toolsModalOpen, setToolsModalOpen] = useState(false);
+  const [presetModalOpen, setPresetModalOpen] = useState(false);
+  const [presetCategory, setPresetCategory] = useState<'all' | 'cards' | 'airlines' | 'hotels'>('all');
   const [userId, setUserId] = useState<string | null>(null);
 
   // Watch Supabase auth state changes
@@ -148,6 +154,7 @@ export function App() {
         onOpenNotifCenter={() => setNotifCenterOpen(true)}
         onOpenAuthModal={() => setAuthModalOpen(true)}
         onOpenProModal={() => setProModalOpen(true)}
+        onOpenToolsModal={() => setToolsModalOpen(true)}
         isSignedIn={Boolean(userId)}
         userEmail={userEmail}
         onSignOut={handleSignOut}
@@ -165,18 +172,18 @@ export function App() {
           unclaimedPerksCount={unclaimedPerksCount}
           fncCount={fncCount}
           onOpenProModal={() => setProModalOpen(true)}
+          onOpenToolsModal={() => setToolsModalOpen(true)}
         />
 
         {/* Tab Content Display Area */}
         <main className="flex-1 min-w-0">
           {activeTab === 'dashboard' && (
-            <DashboardTab
-              cards={cards}
-              airlines={airlines}
-              hotels={hotels}
-              cars={cars}
-              profile={profile}
-              onTogglePerk={togglePerk}
+            <UnifiedVaultTab
+              onOpenPresetModal={(cat) => {
+                setPresetCategory(cat || 'all');
+                setPresetModalOpen(true);
+              }}
+              onOpenToolsModal={() => setToolsModalOpen(true)}
               onNavigateTab={setActiveTab}
             />
           )}
@@ -266,6 +273,18 @@ export function App() {
           onClose={() => setProModalOpen(false)}
         />
       )}
+      {/* Power Tools Suite Modal (5/24, Transfers, CDW, Bonuses, CSV Parser) */}
+      <PowerToolsModal
+        isOpen={toolsModalOpen}
+        onClose={() => setToolsModalOpen(false)}
+      />
+
+      {/* One-Tap Quick Preset Catalog Modal */}
+      <QuickPresetCatalogModal
+        isOpen={presetModalOpen}
+        onClose={() => setPresetModalOpen(false)}
+        defaultCategory={presetCategory}
+      />
     </div>
   );
 }
