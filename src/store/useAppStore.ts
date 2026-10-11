@@ -55,6 +55,7 @@ interface AppState {
   addCard: (card: CreditCard) => void;
   deleteCard: (cardId: string) => void;
   updateCardBalance: (cardId: string, balance: number) => void;
+  setCardPlayer: (cardId: string, player: 'P1' | 'P2') => void;
   setCardReferralUrl: (cardId: string, url: string) => void;
   setCards: (cards: CreditCard[]) => void;
   setAirlines: (airlines: AirlineProgram[]) => void;
@@ -221,6 +222,13 @@ export const useAppStore = create<AppState>()(
         set((state) => ({
           cards: state.cards.map((card) =>
             card.id === cardId ? { ...card, currentBalance: Math.max(0, balance) } : card
+          ),
+        })),
+
+      setCardPlayer: (cardId, player) =>
+        set((state) => ({
+          cards: state.cards.map((card) =>
+            card.id === cardId ? { ...card, player } : card
           ),
         })),
 

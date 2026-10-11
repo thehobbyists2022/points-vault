@@ -127,130 +127,132 @@ export const HouseholdSettingsModal: React.FC<HouseholdSettingsModalProps> = ({ 
           </button>
         </div>
 
-        {/* Members Cards Form */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Player 1 Card */}
-          <div className="p-4 rounded-2xl bg-slate-900/60 border border-indigo-500/20 space-y-3 relative overflow-hidden">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <div className="w-7 h-7 rounded-lg bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center">
-                  <User className="w-4 h-4 text-indigo-300" />
+        {/* Form Container */}
+        <form onSubmit={(e) => { e.preventDefault(); handleSave(); }} className="space-y-6">
+          {/* Members Cards Form */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Player 1 Card */}
+            <div className="p-4 rounded-2xl bg-slate-900/60 border border-indigo-500/20 space-y-3 relative overflow-hidden">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-7 h-7 rounded-lg bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center">
+                    <User className="w-4 h-4 text-indigo-300" />
+                  </div>
+                  <span className="text-xs font-bold text-indigo-300">
+                    {t(language, 'p1NameLabel')}
+                  </span>
                 </div>
-                <span className="text-xs font-bold text-indigo-300">
-                  {t(language, 'p1NameLabel')}
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-bold">
+                  P1 Primary
                 </span>
               </div>
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-bold">
-                P1 Primary
-              </span>
+
+              <div className="space-y-1">
+                <label className="text-[11px] text-slate-400 font-medium">
+                  {language === 'en' ? 'Display Name' : '顯示名稱'}
+                </label>
+                <input
+                  type="text"
+                  value={p1Name}
+                  onChange={(e) => setP1Name(e.target.value)}
+                  placeholder={t(language, 'p1NamePlaceholder')}
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-colors"
+                />
+              </div>
+
+              <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+                <span className="flex items-center gap-1">
+                  <CreditCard className="w-3 h-3 text-slate-500" />
+                  <span>{p1Cards.length} {language === 'en' ? 'cards' : '張卡'}</span>
+                </span>
+                <span className="text-slate-300 font-semibold">
+                  {(p1TotalBalance / 1000).toFixed(0)}k pts
+                </span>
+              </div>
             </div>
 
-            <div className="space-y-1">
-              <label className="text-[11px] text-slate-400 font-medium">
-                {language === 'en' ? 'Display Name' : '顯示名稱'}
-              </label>
-              <input
-                type="text"
-                value={p1Name}
-                onChange={(e) => setP1Name(e.target.value)}
-                placeholder={t(language, 'p1NamePlaceholder')}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-colors"
-              />
-            </div>
+            {/* Player 2 Card */}
+            <div
+              className={`p-4 rounded-2xl border space-y-3 relative overflow-hidden transition-all ${
+                hasP2
+                  ? 'bg-slate-900/60 border-purple-500/20 opacity-100'
+                  : 'bg-slate-950/40 border-slate-800/50 opacity-40 grayscale pointer-events-none'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-7 h-7 rounded-lg bg-purple-500/20 border border-purple-500/40 flex items-center justify-center">
+                    <UserCheck className="w-4 h-4 text-purple-300" />
+                  </div>
+                  <span className="text-xs font-bold text-purple-300">
+                    {t(language, 'p2NameLabel')}
+                  </span>
+                </div>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20 font-bold">
+                  P2 Partner
+                </span>
+              </div>
 
-            <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
-              <span className="flex items-center gap-1">
-                <CreditCard className="w-3 h-3 text-slate-500" />
-                <span>{p1Cards.length} {language === 'en' ? 'cards' : '張卡'}</span>
-              </span>
-              <span className="text-slate-300 font-semibold">
-                {(p1TotalBalance / 1000).toFixed(0)}k pts
-              </span>
+              <div className="space-y-1">
+                <label className="text-[11px] text-slate-400 font-medium">
+                  {language === 'en' ? 'Display Name' : '顯示名稱'}
+                </label>
+                <input
+                  type="text"
+                  disabled={!hasP2}
+                  value={p2Name}
+                  onChange={(e) => setP2Name(e.target.value)}
+                  placeholder={t(language, 'p2NamePlaceholder')}
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 transition-colors disabled:opacity-50"
+                />
+              </div>
+
+              <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+                <span className="flex items-center gap-1">
+                  <CreditCard className="w-3 h-3 text-slate-500" />
+                  <span>{p2Cards.length} {language === 'en' ? 'cards' : '張卡'}</span>
+                </span>
+                <span className="text-slate-300 font-semibold">
+                  {(p2TotalBalance / 1000).toFixed(0)}k pts
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Player 2 Card */}
-          <div
-            className={`p-4 rounded-2xl border space-y-3 relative overflow-hidden transition-all ${
-              hasP2
-                ? 'bg-slate-900/60 border-purple-500/20 opacity-100'
-                : 'bg-slate-950/40 border-slate-800/50 opacity-40 grayscale pointer-events-none'
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <div className="w-7 h-7 rounded-lg bg-purple-500/20 border border-purple-500/40 flex items-center justify-center">
-                  <UserCheck className="w-4 h-4 text-purple-300" />
-                </div>
-                <span className="text-xs font-bold text-purple-300">
-                  {t(language, 'p2NameLabel')}
-                </span>
-              </div>
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20 font-bold">
-                P2 Partner
-              </span>
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[11px] text-slate-400 font-medium">
-                {language === 'en' ? 'Display Name' : '顯示名稱'}
-              </label>
-              <input
-                type="text"
-                disabled={!hasP2}
-                value={p2Name}
-                onChange={(e) => setP2Name(e.target.value)}
-                placeholder={t(language, 'p2NamePlaceholder')}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 transition-colors disabled:opacity-50"
-              />
-            </div>
-
-            <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
-              <span className="flex items-center gap-1">
-                <CreditCard className="w-3 h-3 text-slate-500" />
-                <span>{p2Cards.length} {language === 'en' ? 'cards' : '張卡'}</span>
-              </span>
-              <span className="text-slate-300 font-semibold">
-                {(p2TotalBalance / 1000).toFixed(0)}k pts
-              </span>
-            </div>
+          {/* Tip */}
+          <div className="p-3 bg-indigo-950/30 border border-indigo-500/20 rounded-xl flex items-start space-x-2.5 text-xs text-indigo-300">
+            <Sparkles className="w-4 h-4 shrink-0 text-amber-400 mt-0.5" />
+            <p className="text-[11px] text-slate-300 leading-relaxed">
+              {language === 'en'
+                ? '💡 You can assign cards to either member when adding cards. Switching views at the top filters your dashboard, 5/24 status, and perks between individual partners or combined household.'
+                : '💡 在添加信用卡時，可將卡片指定給特定成員。在頂部切換檢視時，儀表板、5/24 狀態與福利將會隨之篩選，方便單獨或合併管理。'}
+            </p>
           </div>
-        </div>
 
-        {/* Tip */}
-        <div className="p-3 bg-indigo-950/30 border border-indigo-500/20 rounded-xl flex items-start space-x-2.5 text-xs text-indigo-300">
-          <Sparkles className="w-4 h-4 shrink-0 text-amber-400 mt-0.5" />
-          <p className="text-[11px] text-slate-300 leading-relaxed">
-            {language === 'en'
-              ? '💡 You can assign cards to either member when adding cards. Switching views at the top filters your dashboard, 5/24 status, and perks between individual partners or combined household.'
-              : '💡 在添加信用卡時，可將卡片指定給特定成員。在頂部切換檢視時，儀表板、5/24 狀態與福利將會隨之篩選，方便單獨或合併管理。'}
-          </p>
-        </div>
-
-        {/* Footer actions */}
-        <div className="flex items-center justify-end space-x-3 pt-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors"
-          >
-            {t(language, 'cancel')}
-          </button>
-          <button
-            type="button"
-            onClick={handleSave}
-            className="flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-bold shadow-lg shadow-indigo-500/20 transition-all active:scale-[0.98]"
-          >
-            {savedSuccess ? (
-              <>
-                <Check className="w-4 h-4 text-emerald-300" />
-                <span>{language === 'en' ? 'Saved!' : '已保存！'}</span>
-              </>
-            ) : (
-              <span>{t(language, 'saveMemberChanges')}</span>
-            )}
-          </button>
-        </div>
+          {/* Footer actions */}
+          <div className="flex items-center justify-end space-x-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors cursor-pointer"
+            >
+              {t(language, 'cancel')}
+            </button>
+            <button
+              type="submit"
+              className="flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-bold shadow-lg shadow-indigo-500/20 transition-all active:scale-[0.98] cursor-pointer"
+            >
+              {savedSuccess ? (
+                <>
+                  <Check className="w-4 h-4 text-emerald-300" />
+                  <span>{language === 'en' ? 'Saved!' : '已保存！'}</span>
+                </>
+              ) : (
+                <span>{t(language, 'saveMemberChanges')}</span>
+              )}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

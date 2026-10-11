@@ -11,7 +11,9 @@ interface EditBalanceModalProps {
   currentBalance: number;
   currencyName: string;
   cppValue: number;
+  currentPlayer?: 'P1' | 'P2';
   onSave: (newBalance: number) => void;
+  onSavePlayer?: (newPlayer: 'P1' | 'P2') => void;
 }
 
 export const EditBalanceModal: React.FC<EditBalanceModalProps> = ({
@@ -22,10 +24,14 @@ export const EditBalanceModal: React.FC<EditBalanceModalProps> = ({
   currentBalance,
   currencyName,
   cppValue,
+  currentPlayer,
   onSave,
+  onSavePlayer,
 }) => {
   const language = useAppStore((s) => s.language);
+  const profile = useAppStore((s) => s.profile);
   const [balanceInput, setBalanceInput] = useState<string>(currentBalance.toString());
+  const [selectedPlayer, setSelectedPlayer] = useState<'P1' | 'P2'>(currentPlayer || 'P1');
 
   if (!isOpen) return null;
 
@@ -34,6 +40,9 @@ export const EditBalanceModal: React.FC<EditBalanceModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (onSavePlayer && selectedPlayer) {
+      onSavePlayer(selectedPlayer);
+    }
     onSave(Math.max(0, numVal));
     onClose();
   };
@@ -87,6 +96,39 @@ export const EditBalanceModal: React.FC<EditBalanceModalProps> = ({
               className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-lg font-bold text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-colors"
             />
           </div>
+
+          {/* Cardholder Selector if Dual Player Mode */}
+          {profile.hasP2 && currentPlayer && onSavePlayer && (
+            <div className="space-y-1.5 pt-1">
+              <label className="text-xs font-semibold text-slate-300">
+                {language === 'en' ? 'Cardholder Member:' : '持卡成員：'}
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedPlayer('P1')}
+                  className={`px-3 py-2.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                    selectedPlayer === 'P1'
+                      ? 'bg-indigo-600/90 border-indigo-400 text-white shadow-md shadow-indigo-600/30'
+                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {profile.p1Name || 'P1'} (P1)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedPlayer('P2')}
+                  className={`px-3 py-2.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                    selectedPlayer === 'P2'
+                      ? 'bg-purple-600/90 border-purple-400 text-white shadow-md shadow-purple-600/30'
+                      : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {profile.p2Name || 'P2'} (P2)
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Live USD Est */}
           <div className="flex items-center justify-between px-1 text-xs text-slate-400">

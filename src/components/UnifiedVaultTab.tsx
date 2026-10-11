@@ -259,6 +259,7 @@ export const UnifiedVaultTab: React.FC<UnifiedVaultTabProps> = ({
   const profile = useAppStore((s) => s.profile);
   const togglePerk = useAppStore((s) => s.togglePerk);
   const updateCardBalance = useAppStore((s) => s.updateCardBalance);
+  const setCardPlayer = useAppStore((s) => s.setCardPlayer);
   const setAirlineMiles = useAppStore((s) => s.setAirlineMiles);
   const setHotelPoints = useAppStore((s) => s.setHotelPoints);
 
@@ -273,6 +274,7 @@ export const UnifiedVaultTab: React.FC<UnifiedVaultTabProps> = ({
     currentBalance: number;
     currencyName: string;
     cppValue: number;
+    player?: 'P1' | 'P2';
   } | null>(null);
 
   // Filter cards by active household player
@@ -549,9 +551,27 @@ export const UnifiedVaultTab: React.FC<UnifiedVaultTabProps> = ({
 
                     <div className="flex items-center space-x-2">
                       {card.player && (
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${theme.tagBg}`}>
-                          {card.player === 'P1' ? profile.p1Name || 'Matrix (P1)' : profile.p2Name || 'Alex (P2)'}
-                        </span>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (profile.hasP2) {
+                              setCardPlayer(card.id, card.player === 'P1' ? 'P2' : 'P1');
+                            }
+                          }}
+                          title={
+                            profile.hasP2
+                              ? language === 'en'
+                                ? `Assigned to ${card.player === 'P1' ? profile.p1Name || 'P1' : profile.p2Name || 'P2'}. Click to toggle P1/P2`
+                                : `目前持卡人：${card.player === 'P1' ? profile.p1Name || 'P1' : profile.p2Name || 'P2'}。點擊一鍵切換 P1/P2`
+                              : undefined
+                          }
+                          className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${theme.tagBg} ${
+                            profile.hasP2 ? 'hover:scale-105 cursor-pointer ring-1 ring-white/20 active:scale-95' : ''
+                          } transition-all`}
+                        >
+                          {card.player === 'P1' ? profile.p1Name || 'P1' : profile.p2Name || 'P2'}
+                        </button>
                       )}
                       <span className="text-xs font-mono font-bold tracking-wider opacity-80">
                         {theme.digits}
@@ -600,9 +620,10 @@ export const UnifiedVaultTab: React.FC<UnifiedVaultTabProps> = ({
                             currentBalance: card.currentBalance,
                             currencyName: card.pointsCurrency,
                             cppValue: resolveCardCpp(card),
+                            player: card.player,
                           })
                         }
-                        title="Update Balance"
+                        title="Update Balance & Cardholder"
                         className={`p-2 rounded-xl ${theme.btnBg} transition-all cursor-pointer shadow-sm`}
                       >
                         <Edit3 className="w-4 h-4" />
@@ -962,6 +983,12 @@ export const UnifiedVaultTab: React.FC<UnifiedVaultTabProps> = ({
           currentBalance={editingItem.currentBalance}
           currencyName={editingItem.currencyName}
           cppValue={editingItem.cppValue}
+          currentPlayer={editingItem.player}
+          onSavePlayer={(newPlayer) => {
+            if (editingItem.type === 'card') {
+              setCardPlayer(editingItem.id, newPlayer);
+            }
+          }}
           onSave={(newBal) => {
             if (editingItem.type === 'card') {
               updateCardBalance(editingItem.id, newBal);
