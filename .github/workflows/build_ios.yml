@@ -68,6 +68,14 @@ jobs:
             -exportPath "$RUNNER_TEMP/ipa" \
             -exportOptionsPlist ExportOptions.plist
 
+      - name: Upload IPA Artifact to GitHub
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: PointsVault-iOS-IPA
+          path: ${{ runner.temp }}/ipa/*.ipa
+          if-no-files-found: warn
+
       - name: Upload IPA to App Store Connect
         env:
           APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
