@@ -1,4 +1,4 @@
-package com.clarityclinicalsolutions.pointsvault;
+package com.thehobbyists.pointsvault;
 
 import com.getcapacitor.BridgeActivity;
 
