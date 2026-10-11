@@ -13,6 +13,7 @@ import { AffiliateTab } from './components/AffiliateTab';
 import { UnifiedVaultTab } from './components/UnifiedVaultTab';
 import { PowerToolsModal } from './components/PowerToolsModal';
 import { QuickPresetCatalogModal } from './components/QuickPresetCatalogModal';
+import { QuickGuideModal } from './components/QuickGuideModal';
 import { NotificationCenter } from './components/NotificationCenter';
 import { AuthModal } from './components/AuthModal';
 import { DemoBanner } from './components/DemoBanner';
@@ -33,6 +34,7 @@ export function App() {
   const [wizardOpen, setWizardOpen] = useState(false);
   const [proModalOpen, setProModalOpen] = useState(false);
   const [toolsModalOpen, setToolsModalOpen] = useState(false);
+  const [quickGuideOpen, setQuickGuideOpen] = useState(false);
   const [presetModalOpen, setPresetModalOpen] = useState(false);
   const [presetCategory, setPresetCategory] = useState<'all' | 'cards' | 'airlines' | 'hotels'>('all');
   const [userId, setUserId] = useState<string | null>(null);
@@ -155,6 +157,7 @@ export function App() {
         onOpenAuthModal={() => setAuthModalOpen(true)}
         onOpenProModal={() => setProModalOpen(true)}
         onOpenToolsModal={() => setToolsModalOpen(true)}
+        onOpenQuickGuide={() => setQuickGuideOpen(true)}
         isSignedIn={Boolean(userId)}
         userEmail={userEmail}
         onSignOut={handleSignOut}
@@ -184,6 +187,7 @@ export function App() {
                 setPresetModalOpen(true);
               }}
               onOpenToolsModal={() => setToolsModalOpen(true)}
+              onOpenQuickGuide={() => setQuickGuideOpen(true)}
               onNavigateTab={setActiveTab}
             />
           )}
@@ -284,6 +288,12 @@ export function App() {
         isOpen={presetModalOpen}
         onClose={() => setPresetModalOpen(false)}
         defaultCategory={presetCategory}
+      />
+
+      {/* 30-Second Quick Start Guide Modal */}
+      <QuickGuideModal
+        isOpen={quickGuideOpen}
+        onClose={() => setQuickGuideOpen(false)}
       />
     </div>
   );

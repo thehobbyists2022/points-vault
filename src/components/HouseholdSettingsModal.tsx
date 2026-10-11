@@ -220,12 +220,12 @@ export const HouseholdSettingsModal: React.FC<HouseholdSettingsModalProps> = ({ 
           </div>
 
           {/* Tip */}
-          <div className="p-3 bg-indigo-950/30 border border-indigo-500/20 rounded-xl flex items-start space-x-2.5 text-xs text-indigo-300">
+          <div className="p-3 bg-indigo-950/40 border border-indigo-500/30 rounded-2xl flex items-start space-x-2.5 text-xs text-indigo-300">
             <Sparkles className="w-4 h-4 shrink-0 text-amber-400 mt-0.5" />
             <p className="text-[11px] text-slate-300 leading-relaxed">
               {language === 'en'
-                ? '💡 You can assign cards to either member when adding cards. Switching views at the top filters your dashboard, 5/24 status, and perks between individual partners or combined household.'
-                : '💡 在添加信用卡時，可將卡片指定給特定成員。在頂部切換檢視時，儀表板、5/24 狀態與福利將會隨之篩選，方便單獨或合併管理。'}
+                ? '💡 Household Guide: P1 represents the primary holder (e.g. yourself), P2 represents the partner/spouse. Once names are set, tap the member badge on any card to switch owners. Press Enter to save quickly!'
+                : '💡 家庭模式說明：P1 代表主持卡人（如自己），P2 代表伴侶/家人。設定好名稱後，每張卡片右上角的標籤皆可一鍵點擊切換歸屬，頂部亦可隨時切換單人或家庭總覽。按 Enter 鍵可快速儲存！'}
             </p>
           </div>
 

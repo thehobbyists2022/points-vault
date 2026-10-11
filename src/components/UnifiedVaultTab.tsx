@@ -29,6 +29,7 @@ interface UnifiedVaultTabProps {
   onOpenPresetModal: (category?: 'all' | 'cards' | 'airlines' | 'hotels') => void;
   onOpenToolsModal: (tool?: string) => void;
   onNavigateTab: (tab: any) => void;
+  onOpenQuickGuide?: () => void;
 }
 
 // 1. Industry Standard Currency Abbreviation
@@ -251,6 +252,7 @@ export const UnifiedVaultTab: React.FC<UnifiedVaultTabProps> = ({
   onOpenPresetModal,
   onOpenToolsModal,
   onNavigateTab,
+  onOpenQuickGuide,
 }) => {
   const language = useAppStore((s) => s.language);
   const cards = useAppStore((s) => s.cards);
@@ -266,6 +268,14 @@ export const UnifiedVaultTab: React.FC<UnifiedVaultTabProps> = ({
   const [activeFilter, setActiveFilter] = useState<'all' | 'cards' | 'airlines' | 'hotels'>('all');
   const [displayMode, setDisplayMode] = useState<'stack' | 'list'>('stack');
   const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
+  const [showGuideBanner, setShowGuideBanner] = useState<boolean>(() => {
+    return localStorage.getItem('pointsvault_hide_quick_guide') !== 'true';
+  });
+
+  const handleDismissGuide = () => {
+    localStorage.setItem('pointsvault_hide_quick_guide', 'true');
+    setShowGuideBanner(false);
+  };
 
   const [editingItem, setEditingItem] = useState<{
     id: string;
@@ -364,6 +374,73 @@ export const UnifiedVaultTab: React.FC<UnifiedVaultTabProps> = ({
           </div>
         </div>
       </div>
+
+      {/* 30-Second Quick Start Guide Banner (Dismissible) */}
+      {showGuideBanner && (
+        <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-indigo-950/70 via-slate-900/90 to-purple-950/60 border border-indigo-500/30 shadow-xl relative overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center space-x-2">
+              <span className="flex h-2 w-2 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+              </span>
+              <span className="text-xs font-black text-amber-400 tracking-wide uppercase">
+                {language === 'en' ? '💡 30-Second Quick Start Guide' : '💡 30 秒新手速成指南'}
+              </span>
+            </div>
+
+            <div className="flex items-center space-x-3 shrink-0">
+              {onOpenQuickGuide && (
+                <button
+                  onClick={onOpenQuickGuide}
+                  className="text-xs text-indigo-300 hover:text-white font-semibold underline underline-offset-4 cursor-pointer"
+                >
+                  {language === 'en' ? 'Detailed Tour →' : '圖解詳解 →'}
+                </button>
+              )}
+              <button
+                onClick={handleDismissGuide}
+                title={language === 'en' ? 'Dismiss guide' : '不再顯示導覽'}
+                className="px-2 py-0.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer text-xs flex items-center gap-1 font-semibold"
+              >
+                <span>✕ {language === 'en' ? 'Dismiss' : '關閉'}</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+            <div className="p-3 rounded-2xl bg-slate-950/70 border border-slate-800/80 space-y-1">
+              <div className="font-bold text-slate-200 flex items-center gap-1.5">
+                <span className="w-4 h-4 rounded-full bg-indigo-500/20 text-indigo-300 flex items-center justify-center text-[10px] font-black">1</span>
+                <span>{language === 'en' ? 'One-Tap Intake' : '一秒免打字收納'}</span>
+              </div>
+              <p className="text-[11px] text-slate-400 leading-snug">
+                {language === 'en' ? 'Click preset tags below (Amex, Delta, CSP) to add instantly.' : '點擊下方預設標籤（Delta、Amex、Hyatt），0 打字一秒加入。'}
+              </p>
+            </div>
+
+            <div className="p-3 rounded-2xl bg-slate-950/70 border border-slate-800/80 space-y-1">
+              <div className="font-bold text-slate-200 flex items-center gap-1.5">
+                <span className="w-4 h-4 rounded-full bg-amber-500/20 text-amber-300 flex items-center justify-center text-[10px] font-black">2</span>
+                <span>{language === 'en' ? 'Update & App Jump' : '點 ✏️ 改數字 / 跳官方 App'}</span>
+              </div>
+              <p className="text-[11px] text-slate-400 leading-snug">
+                {language === 'en' ? 'Tap ✏️ to update balances; tap ↗ to open official bank apps.' : '點卡片 ✏️ 更新點數；點 ↗ 直跳 Amex / Chase / Delta 查帳。'}
+              </p>
+            </div>
+
+            <div className="p-3 rounded-2xl bg-slate-950/70 border border-slate-800/80 space-y-1">
+              <div className="font-bold text-slate-200 flex items-center gap-1.5">
+                <span className="w-4 h-4 rounded-full bg-purple-500/20 text-purple-300 flex items-center justify-center text-[10px] font-black">3</span>
+                <span>{language === 'en' ? 'Assign P1/P2 & Perks' : '指派成員與福利打卡'}</span>
+              </div>
+              <p className="text-[11px] text-slate-400 leading-snug">
+                {language === 'en' ? 'Tap [P1/P2] badge to reassign card. Check off perks below.' : '點卡面 [P1/P2] 徽章一秒換人；底部隨時勾選福利銷帳。'}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 2. One-Tap Quick Intake Strip (0 Typing) */}
       <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-lg space-y-2.5">

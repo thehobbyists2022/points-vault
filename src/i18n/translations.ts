@@ -373,6 +373,20 @@ export const translations = {
     // Annual Referral Cap
     annualCap: "Annual Referral Cap",
     capRemaining: "Cap Remaining",
+
+    // 30-Second Quick Guide
+    quickGuideBtn: "Guide 💡",
+    quickGuideTitle: "30-Second Quick Start Guide",
+    quickGuideSubtitle: "Master PointsVault in 3 simple steps without complex manuals.",
+    step1Title: "1. One-Tap Quick Intake",
+    step1Desc: "Click any top preset button (Delta, Amex Gold, CSP, Hyatt) to add cards & programs with 0 typing.",
+    step2Title: "2. Update Balances & App Jump",
+    step2Desc: "Tap ✏️ to update points & dollar value, or tap ↗ to open official banking/airline apps directly.",
+    step3Title: "3. Assign P1/P2 & Claim Perks",
+    step3Desc: "Click the member badge on any card to toggle between P1/P2. Check off monthly perks to never miss credits.",
+    step4Title: "4. Power Tools Suite",
+    step4Desc: "Click Tools ⚙️ anytime for Chase 5/24 tracker, Transfer Bonus matrix, Car CDW, and Statement upload.",
+    quickGuideGotIt: "Got it, let's go!",
   },
   zh: {
     // Header
@@ -746,6 +760,20 @@ export const translations = {
     // Annual Referral Cap
     annualCap: "年度推薦上限",
     capRemaining: "剩餘額度",
+
+    // 30-Second Quick Guide
+    quickGuideBtn: "新手指南 💡",
+    quickGuideTitle: "💡 30 秒新手速成指南",
+    quickGuideSubtitle: "3 步快速上手 PointsVault，無需研讀複雜手冊。",
+    step1Title: "1. 一秒免打字收納",
+    step1Desc: "點擊上方熱門標籤（Delta、Amex Gold、Chase CSP、Hyatt 等），0 打字一秒收納常用卡片與航司。",
+    step2Title: "2. 點擊卡面改餘額 / 直跳官網",
+    step2Desc: "點擊卡片右下角 ✏️ 隨時修改點數與估值；點擊 ↗ 官方 App 直接跳轉 Amex / Chase / Delta 查帳。",
+    step3Title: "3. 指派成員與福利銷帳",
+    step3Desc: "點擊卡面右上角成員徽章一秒切換 P1/P2 指派；在下方隨時勾選即期福利銷帳，不再白白浪費報銷額度。",
+    step4Title: "4. 進階玩卡工具箱",
+    step4Desc: "隨時點擊「進階工具箱 ⚙️」，即可一鍵呼叫 5/24 槽位分析、轉點加贈矩陣、租車 CDW 與帳單解析。",
+    quickGuideGotIt: "我知道了，開始體驗！",
   }
 };
 

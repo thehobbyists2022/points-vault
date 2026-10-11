@@ -18,6 +18,7 @@ interface HeaderProps {
   onOpenAuthModal: () => void;
   onOpenProModal: () => void;
   onOpenToolsModal?: () => void;
+  onOpenQuickGuide?: () => void;
   isSignedIn: boolean;
   userEmail?: string | null;
   onSignOut?: () => void;
@@ -36,6 +37,7 @@ export const Header: React.FC<HeaderProps> = ({
   userEmail,
   onSignOut,
   onOpenToolsModal,
+  onOpenQuickGuide,
 }) => {
   const language = useAppStore((s) => s.language);
   const setLanguage = useAppStore((s) => s.setLanguage);
@@ -220,6 +222,18 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Wrench className="w-3.5 h-3.5 text-indigo-400" />
             <span>{language === 'en' ? 'Tools ⚙️' : '工具箱 ⚙️'}</span>
+          </button>
+        )}
+
+        {/* 30-Second Quick Guide Button */}
+        {onOpenQuickGuide && (
+          <button
+            onClick={onOpenQuickGuide}
+            title={language === 'en' ? '30-Second Quick Guide' : '30 秒新手速成指南'}
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 transition-all text-xs font-bold cursor-pointer"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span>{t(language, 'quickGuideBtn')}</span>
           </button>
         )}
 
