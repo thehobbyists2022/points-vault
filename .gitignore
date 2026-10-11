@@ -32,4 +32,8 @@ appstore_screenshots/
 
 # Downloaded mobile release bundles (IPAs / APKs / AABs)
 mobile_bundles/
+*.aab
+*.apk
+*.keystore
+*.jks
 
